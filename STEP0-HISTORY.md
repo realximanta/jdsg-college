@@ -1,4 +1,5 @@
-# STEP 0: Project History & Blueprint - *04-05/11/2026*
+# STEP 0: Project History & Blueprint - 
+**UPDATE** *04-05/11/2026*
 
 This document serves as the absolute source of truth for the JDSG College App and Web project. It records every architectural decision, feature flow, and requirement discussed before the first line of code was written. 
 
