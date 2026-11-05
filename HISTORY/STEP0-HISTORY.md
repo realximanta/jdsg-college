@@ -20,7 +20,19 @@ This document serves as the absolute source of truth for the JDSG College App an
 - **CI/CD:** GitHub Actions (Auto-bump version, build signed APK, publish release).
 - **Keep-Alive:** UptimeRobot pinging `/live` endpoint every 5 minutes.
 
-## 📌 3. App Flow & Screen Details
+## 📌 3. Official Institutional Data (Scraped & Verified)
+- **Full Name:** Jogananda Deva Satradhikar Goswami (JDSG) College.
+- **Establishment:** 1964; Provincialized in 2005.
+- **Affiliation:** Dibrugarh University; recognized under UGC Act.
+- **Location:** P.O. Bokakhat–785612, Dist. Golaghat, Assam (Beside N.H. 37 near Kaziranga).
+- **Vision:** *"Education for Social Justice and Peace"*
+- **Principal:** Dr. Jayanta Gogoi.
+- **Contact:** 03776-268082 / 9954451703 | jdsgcollegelibrary@gmail.com
+- **Certifications:** ISO 9001:2015, NAAC accredited.
+- **Academic Streams:** UG Arts & Commerce; PG in Assamese & Commerce (introduced 2022-23); HS Arts & Commerce.
+- **Verified Departments:** Assamese, Commerce, Economics, Education, English, History, Philosophy, Political Science, Geography (New).
+
+## 📌 4. App Flow & Screen Details
 
 ### A. Landing Screen (Unauthenticated)
 - **Content:** About the Home of College (similar feel to the official jdsgcollege.edu.in).
@@ -47,7 +59,7 @@ This document serves as the absolute source of truth for the JDSG College App an
   - Emergency Contact (Optional).
 - **If Teacher:**
   - Full Name* (Required)
-  - Department* (Required): Assamese, Commerce, Economics, Education, English, History, Philosophy, Political Science, Geography (New).
+  - Department* (Required): Assamese, Commerce, Economics, Education, English, History, Philosophy, Political Science, Geography.
   - Designation* (Required): Asst. Professor / HOD.
   - Phone No* (Required, exactly 10 digits).
   - Profile Picture* (Required).
@@ -57,10 +69,10 @@ This document serves as the absolute source of truth for the JDSG College App an
 
 ### D. Screens
 - **Home:** Placeholder for now (routine/room locators to be added later).
-- **Notifications:** Pulls data via backend from `https://jdsgcollege.edu.in/category/notifications/`. 
+- **Notifications:** Pulls data via backend from `https://jdsgcollege.edu.in/category/notifications/`.
 - **My Account:** Instagram-style profile screen. Displays Full Name, Role, Department/Class, Phone, Profile Picture. Includes an "Update Profile" button (all fields mandatory, must not be empty).
 
-## 📌 4. Backend Architecture (Go)
+## 📌 5. Backend Architecture (Go)
 - **API Endpoints:**
   - `POST /api/auth/google` (Verify token, issue JWT)
   - `GET /api/users/me` (Get profile)
@@ -68,16 +80,18 @@ This document serves as the absolute source of truth for the JDSG College App an
   - `PUT /api/users/me` (Update profile)
   - `POST /api/users/me/avatar` (Handle image upload)
   - `GET /api/notifications` (Proxy/scrape college site)
+  - `GET /api/departments` (Static list for teacher signup)
   - `GET /live` & `HEAD /live` (UptimeRobot health check)
 - **Notifications Scraper:** Go backend will parse the WP REST API or scrape the HTML of the college notifications page, cache it for 5-10 mins, and serve clean JSON to the app/web.
 - **Storage Flow:** App compresses image to max 2048x2048 WebP (~500KB or less), sends to Go backend, Go uploads to Cloudflare R2, saves the public CDN URL to Workers KV.
 
-## 📌 5. Design Language
-- **Vibe:** Minimal, official, modern. Institutional blue/teal accents.
-- **Typography:** Inter or Satoshi for UI, Serif for official college name.
-- **Layout:** Card-based notification feed, clean spacing, no clutter.
-- **Icons:** Official college logo (provided in assets).
+## 📌 6. Theme Direction (Minimal, Official, Different)
+- **Vibe:** Minimal, official, modern. Institutional blue/teal accents as a nod to the official site.
+- **Typography:** Inter or Satoshi for UI text; Serif specifically for the official college name to retain institutional gravitas.
+- **Layout:** Card-based notification feed with date/category badges. Clean spacing, zero clutter.
+- **Profile UI:** Instagram-style header with role badge, department/class, phone, and avatar.
+- **Navigation:** Hamburger drawer containing About (in-app), Privacy & Terms (external browser).
 
-## 📌 6. Open Decisions / Side Quests
+## 📌 7. Open Decisions / Side Quests
 - Profile picture *is* mandatory at signup (as requested), but we must ensure aggressive client-side compression so users don't bounce due to slow uploads.
 - The "password-protected URL" idea for R2 was scrapped in favor of an authenticated Go API endpoint (`GET /api/user/:id`).
