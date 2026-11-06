@@ -2,11 +2,13 @@
   <img src="assets/header.svg" alt="JDSG College Header" width="100%" />
 </div>
 
-<p align="center">
-  <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG College Campus" width="100%" style="border-radius: 10px;" />
-</p>
+<br />
 
----
+<div align="center">
+  <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG College Campus" width="90%" />
+</div>
+
+<br />
 
 ## 🏛️ About the College
 **Jogananda Deva Satradhikar Goswami (JDSG) College**, established in 1964, is a premier educational institution located in Bokakhat, Golaghat, Assam. Affiliated with Dibrugarh University and recognized under the UGC Act, the college is dedicated to its vision of *"Education for Social Justice and Peace."*
@@ -36,6 +38,6 @@ This is a monorepo containing both the Android application and the polyglot back
 - **Hosting:** Render (Backend), Cloudflare (Storage/DNS)
 
 ---
-<p align="center">
+<div align="center">
   <i>Developed by <a href="https://github.com/realximanta">realximanta</a>.</i>
-</p>
+</div>
