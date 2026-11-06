@@ -1,14 +1,6 @@
 <div align="center">
-  <img src="assets/header.svg" alt="JDSG College Header" width="100%" />
+  <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG College Campus" width="100%" />
 </div>
-
-<br />
-
-<div align="center">
-  <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG College Campus" width="90%" />
-</div>
-
-<br />
 
 ## 🏛️ About the College
 **Jogananda Deva Satradhikar Goswami (JDSG) College**, established in 1964, is a premier educational institution located in Bokakhat, Golaghat, Assam. Affiliated with Dibrugarh University and recognized under the UGC Act, the college is dedicated to its vision of *"Education for Social Justice and Peace."*
