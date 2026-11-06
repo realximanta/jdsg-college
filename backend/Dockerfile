@@ -13,8 +13,12 @@ FROM alpine:3.19
 
 WORKDIR /app
 
-# Install CA certs for HTTPS and Python with required libraries
-RUN apk --no-cache add ca-certificates python3 py3-requests py3-beautifulsoup4
+# Install CA certs, Python (with scraper libs), Node.js, and PHP
+RUN apk --no-cache add \
+    ca-certificates \
+    python3 py3-requests py3-beautifulsoup4 \
+    nodejs npm \
+    php81 php81-curl php81-openssl
 
 # Copy the compiled Go binary
 COPY --from=builder /app/main .
