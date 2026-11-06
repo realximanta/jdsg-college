@@ -4,11 +4,11 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/realximanta/jdsg-college/backend/internal/config"
 	"github.com/realximanta/jdsg-college/backend/internal/handlers"
+	"github.com/realximanta/jdsg-college/backend/internal/middleware"
 	"github.com/realximanta/jdsg-college/backend/internal/storage"
 )
 
@@ -53,10 +53,13 @@ func main() {
 	// Notification Routes
 	mux.HandleFunc("GET /api/notifications", notifHandler.GetNotifications)
 
+	// Wrap the mux with CORS middleware
+	corsHandler := middleware.CORS(mux)
+
 	// Server config
 	srv := &http.Server{
 		Addr:         fmt.Sprintf(":%s", cfg.Port),
-		Handler:      mux, // We will wrap this with CORS middleware next
+		Handler:      corsHandler, 
 		ReadTimeout:  10 * time.Second,
 		WriteTimeout: 10 * time.Second,
 		IdleTimeout:  15 * time.Second,
