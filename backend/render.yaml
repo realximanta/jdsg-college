@@ -1,0 +1,12 @@
+services:
+  - type: web
+    name: jdsg-college-backend
+    env: docker
+    plan: free
+    region: singapore
+    dockerContext: .
+    dockerfilePath: Dockerfile
+    healthCheckPath: /live
+    envVars:
+      - key: PORT
+        value: 8080
