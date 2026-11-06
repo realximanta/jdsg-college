@@ -3,29 +3,27 @@ FROM golang:1.22-alpine AS builder
 
 WORKDIR /app
 
-# Copy go.mod (and go.sum if you had dependencies, but currently it's empty)
-COPY go.mod ./
-# RUN go mod download # Uncomment when dependencies are added
-
-# Copy source code
+# Copy everything and tidy to resolve go.sum and dependencies
 COPY . .
-
-# Build the binary
+RUN go mod tidy
 RUN CGO_ENABLED=0 GOOS=linux go build -ldflags="-s -w" -o main .
 
 # Final stage
-FROM alpine:latest
+FROM alpine:3.19
 
 WORKDIR /app
 
-# Install ca-certificates for HTTPS requests (needed later for Google Auth/R2)
-RUN apk --no-cache add ca-certificates
+# Install CA certs for HTTPS and Python with required libraries
+RUN apk --no-cache add ca-certificates python3 py3-requests py3-beautifulsoup4
 
-# Copy the binary from builder
+# Copy the compiled Go binary
 COPY --from=builder /app/main .
 
-# Expose port (Render sets PORT env var, default 8080)
+# Copy the Python scripts directory
+COPY --from=builder /app/scripts ./scripts
+
+# Expose port (Render sets PORT env var)
 EXPOSE 8080
 
-# Run the binary
+# Run the Go server
 CMD ["./main"]
