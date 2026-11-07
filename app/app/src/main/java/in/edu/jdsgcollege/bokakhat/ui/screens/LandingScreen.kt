@@ -1,5 +1,6 @@
 package in.edu.jdsgcollege.bokakhat.ui.screens
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import in.edu.jdsgcollege.bokakhat.R
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 
+@OptIn(ExperimentalFoundationApi::class) // <--- ADDED THIS
 @Composable
 fun LandingScreen(
     onMenuClick: () -> Unit,
