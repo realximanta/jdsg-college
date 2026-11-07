@@ -1,7 +1,9 @@
 package handlers
 
 import (
+	"bytes"
 	"encoding/json"
+	"log"
 	"net/http"
 	"os/exec"
 	"sync"
@@ -35,10 +37,17 @@ func (h *NotificationHandler) GetNotifications(w http.ResponseWriter, r *http.Re
 	}
 	h.mu.RUnlock()
 
-	// Execute Python script (Path is relative to the Docker WORKDIR)
+	// Execute Python script
 	cmd := exec.Command("python3", "scripts/scraper.py")
+	
+	// Capture stderr for debugging if the script fails
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
+
 	out, err := cmd.Output()
 	if err != nil {
+		log.Printf("Python scraper failed: %v, stderr: %s", err, stderr.String())
+		
 		// If Python script fails, return stale cache if available
 		h.mu.RLock()
 		defer h.mu.RUnlock()
@@ -53,6 +62,8 @@ func (h *NotificationHandler) GetNotifications(w http.ResponseWriter, r *http.Re
 
 	var notifications []Notification
 	if err := json.Unmarshal(out, &notifications); err != nil {
+		log.Printf("Failed to parse scraper output: %v", err)
+		
 		// Parse error fallback
 		h.mu.RLock()
 		defer h.mu.RUnlock()
