@@ -1,10 +1,12 @@
 package in.edu.jdsgcollege.bokakhat.ui.screens
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.*
@@ -13,8 +15,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import in.edu.jdsgcollege.bokakhat.R
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 
@@ -27,7 +32,6 @@ fun LandingScreen(
     val pagerState = rememberPagerState(pageCount = { 3 })
 
     Box(modifier = Modifier.fillMaxSize()) {
-        // Carousel
         HorizontalPager(
             state = pagerState,
             modifier = Modifier.fillMaxSize()
@@ -39,7 +43,6 @@ fun LandingScreen(
             }
         }
 
-        // Top Bar Overlay (Hamburger + Auth Buttons)
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -65,7 +68,6 @@ fun LandingScreen(
             }
         }
 
-        // Pagination Dots
         Row(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -95,12 +97,15 @@ fun SlideOneCollegeFront() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for College Image
-        Box(
+        // Local Image loaded from res/drawable/college_front.jpg
+        Image(
+            painter = painterResource(id = R.drawable.college_front),
+            contentDescription = "College Front",
             modifier = Modifier
-                .fillMaxWidth(0.8f)
+                .fillMaxWidth(0.9f)
                 .height(300.dp)
-                .background(Color.LightGray)
+                .clip(RoundedCornerShape(16.dp)),
+            contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
@@ -125,12 +130,14 @@ fun SlideTwoPrincipal() {
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        // Placeholder for Principal Image
-        Box(
+        // Local Image loaded from res/drawable/principal.jpg
+        Image(
+            painter = painterResource(id = R.drawable.principal),
+            contentDescription = "Principal",
             modifier = Modifier
                 .size(200.dp)
-                .clip(CircleShape)
-                .background(Color.LightGray)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.height(24.dp))
         Text(
