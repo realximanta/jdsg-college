@@ -6,37 +6,31 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Load local.properties for local builds
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
-// Fetch Web Client ID
-val webClientId = System.getenv("WEB_CLIENT_ID")?.takeIf { it.isNotBlank() } 
+val webClientId = System.getenv("WEB_CLIENT_ID") 
     ?: localProperties.getProperty("WEB_CLIENT_ID") 
     ?: "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com"
 
-// Fetch Keystore Credentials (Env Vars for CI, local.properties for Local)
-val keystorePath = System.getenv("KEYSTORE_PATH")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEYSTORE_PATH")
-val keystorePassword = System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEYSTORE_PASSWORD")
-val keyAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEY_ALIAS")
-val keyPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEY_PASSWORD")
+val keystorePath = System.getenv("KEYSTORE_PATH") ?: localProperties.getProperty("KEYSTORE_PATH")
+val keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: localProperties.getProperty("KEYSTORE_PASSWORD")
+val keyAlias = System.getenv("KEY_ALIAS") ?: localProperties.getProperty("KEY_ALIAS")
+val keyPassword = System.getenv("KEY_PASSWORD") ?: localProperties.getProperty("KEY_PASSWORD")
 
 android {
-    // FIXED: Removed the reserved 'in' keyword from the package namespace
     namespace = "edu.jdsgcollege.bokakhat"
-    
     compileSdk = 34
 
     defaultConfig {
-        // KEPT: Google OAuth requires the applicationId to match your domain
         applicationId = "in.edu.jdsgcollege.bokakhat"
         minSdk = 26
         targetSdk = 34
-        versionCode = 7
-        versionName = "1.0.5"
+        versionCode = 6
+        versionName = "1.0.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
@@ -44,12 +38,12 @@ android {
 
     signingConfigs {
         create("release") {
-            // Only configure signing if all fields are present and not empty
-            if (!keystorePath.isNullOrBlank() && !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()) {
-                storeFile = file(keystorePath)
-                storePassword = keystorePassword
-                keyAlias = keyAlias
-                this.keyPassword = keyPassword
+            // Only configure if env vars exist (matches working reference code)
+            if (System.getenv("KEYSTORE_PATH") != null) {
+                storeFile = file(System.getenv("KEYSTORE_PATH"))
+                storePassword = System.getenv("KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("KEY_ALIAS")
+                keyPassword = System.getenv("KEY_PASSWORD")
             }
         }
     }
@@ -58,8 +52,7 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Apply signing config only if it was successfully configured
-            if (!keystorePath.isNullOrBlank() && !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()) {
+            if (System.getenv("KEYSTORE_PATH") != null) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
