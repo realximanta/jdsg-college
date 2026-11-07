@@ -18,6 +18,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
     object Home : BottomNavItem("home", Icons.Default.Home, "Home")
@@ -26,7 +27,7 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: 
 }
 
 @Composable
-fun DashboardScreen() {
+fun DashboardScreen(authViewModel: AuthViewModel) {
     val navController = rememberNavController()
     val items = listOf(
         BottomNavItem.Home,
@@ -68,13 +69,13 @@ fun DashboardScreen() {
             modifier = Modifier.padding(innerPadding)
         ) {
             composable(BottomNavItem.Home.route) { 
-                Box(Modifier.fillMaxSize()) { Text("Home Placeholder") } 
+                HomeScreen(authViewModel = authViewModel) 
             }
             composable(BottomNavItem.Notifications.route) { 
-                Box(Modifier.fillMaxSize()) { Text("Notifications Placeholder") } 
+                NotificationsScreen() 
             }
             composable(BottomNavItem.Account.route) { 
-                Box(Modifier.fillMaxSize()) { Text("Account Placeholder") } 
+                AccountScreen(authViewModel = authViewModel) 
             }
         }
     }
