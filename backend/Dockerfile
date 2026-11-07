@@ -26,6 +26,9 @@ COPY --from=builder /app/main .
 # Copy the Python scripts directory
 COPY --from=builder /app/scripts ./scripts
 
+# Copy the public HTML directory
+COPY --from=builder /app/public ./public
+
 # Expose port
 EXPOSE 8080
 
