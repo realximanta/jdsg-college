@@ -87,6 +87,11 @@ jobs:
         with:
           gradle-version: '8.5'
 
+      - name: Generate Gradle Wrapper
+        run: |
+          cd app
+          gradle wrapper --gradle-version 8.5
+
       - name: Restore Keystore & local.properties
         run: |
           mkdir -p "$HOME/.android"
@@ -94,7 +99,6 @@ jobs:
           chmod 600 "$HOME/.android/release.keystore"
           test -s "$HOME/.android/release.keystore" || { echo "::error::keystore decoded to empty file"; exit 1; }
           
-          # Create local.properties for the Android build
           echo "WEB_CLIENT_ID=${{ secrets.WEB_CLIENT_ID }}" > app/local.properties
           echo "sdk.dir=$ANDROID_HOME" >> app/local.properties
 
