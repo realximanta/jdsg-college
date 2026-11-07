@@ -223,23 +223,9 @@ fun UpdateProfileScreen(
                     isLoading = true
                     scope.launch {
                         try {
-                            // 1. Prepare updated user object (keep existing profile pic for now)
-                            var updatedUser = User(
-                                id = currentUser?.id ?: "",
-                                email = currentUser?.email ?: "",
-                                full_name = fullName,
-                                role = selectedRole,
-                                class_name = if (selectedRole == "student") classSelection else null,
-                                semester = if (selectedRole == "student") semester else null,
-                                roll_no = currentUser?.roll_no,
-                                emergency_contact = currentUser?.emergency_contact,
-                                department = if (selectedRole == "teacher") deptSelection else null,
-                                designation = if (selectedRole == "teacher") designation else null,
-                                phone = phone,
-                                profile_pic_url = currentUser?.profile_pic_url ?: ""
-                            )
-
-                            // 2. Upload new avatar if selected
+                            var finalUser = currentUser
+                            
+                            // 1. Upload avatar if new one is selected
                             if (compressedImageFile != null) {
                                 val filePart = MultipartBody.Part.createFormData(
                                     "avatar", 
@@ -248,22 +234,33 @@ fun UpdateProfileScreen(
                                 )
                                 val avatarResponse = RetrofitClient.apiService.uploadAvatar("Bearer $token", filePart)
                                 if (avatarResponse.isSuccessful && avatarResponse.body() != null) {
-                                    // Update local object with the new R2 URL
-                                    updatedUser = avatarResponse.body()!!
-                                    // Note: The backend uploadAvatar endpoint already updates the KV store.
-                                    // But we might overwrite it with the next call if we aren't careful.
-                                    // Since the backend updateProfile endpoint overwrites the whole user object,
-                                    // passing the updated profile_pic_url here ensures it is saved correctly.
+                                    finalUser = avatarResponse.body() // Get updated user with new avatar URL
                                 } else {
                                     Toast.makeText(context, "Failed to upload avatar", Toast.LENGTH_SHORT).show()
+                                    isLoading = false
+                                    return@launch
                                 }
                             }
 
-                            // 3. Call API to update text fields
+                            // 2. Update text fields
+                            val updatedUser = User(
+                                id = finalUser?.id ?: "",
+                                email = finalUser?.email ?: "",
+                                full_name = fullName,
+                                role = selectedRole,
+                                class_name = if (selectedRole == "student") classSelection else null,
+                                semester = if (selectedRole == "student") semester else null,
+                                roll_no = finalUser?.roll_no,
+                                emergency_contact = finalUser?.emergency_contact,
+                                department = if (selectedRole == "teacher") deptSelection else null,
+                                designation = if (selectedRole == "teacher") designation else null,
+                                phone = phone,
+                                profile_pic_url = finalUser?.profile_pic_url ?: ""
+                            )
+
                             val response = RetrofitClient.apiService.updateProfile("Bearer $token", updatedUser)
                             
                             if (response.isSuccessful && response.body() != null) {
-                                // 4. Update session and trigger success callback
                                 authViewModel.updateSession(token, response.body()!!)
                                 Toast.makeText(context, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
                                 onUpdateSuccess()
