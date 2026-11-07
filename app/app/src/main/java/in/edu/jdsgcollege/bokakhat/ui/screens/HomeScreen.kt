@@ -7,15 +7,20 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Schedule
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
-fun HomeScreen() {
+fun HomeScreen(authViewModel: AuthViewModel) {
+    val currentUser by authViewModel.currentUser.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -27,7 +32,7 @@ fun HomeScreen() {
             color = MaterialTheme.colorScheme.onBackground
         )
         Text(
-            text = "Student Name", // Placeholder for dynamic name
+            text = currentUser?.full_name ?: "Student",
             style = MaterialTheme.typography.headlineLarge,
             color = BluePrimary
         )
