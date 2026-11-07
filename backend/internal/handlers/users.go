@@ -34,7 +34,7 @@ func (h *UserHandler) getAuthEmail(r *http.Request) (string, error) {
 	return auth.VerifyJWT(tokenString, h.cfg.JWTSecret)
 }
 
-// CompleteSignup (Kept for completeness, though Android uses PUT /users/me)
+// CompleteSignup is kept for legacy reasons but Android now uses PUT /users/me
 func (h *UserHandler) CompleteSignup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -112,35 +112,47 @@ func (h *UserHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var user models.User
-	if err := json.NewDecoder(r.Body).Decode(&user); err != nil {
+	var incomingUser models.User
+	if err := json.NewDecoder(r.Body).Decode(&incomingUser); err != nil {
 		http.Error(w, "Invalid request body", http.StatusBadRequest)
 		return
 	}
 
-	if len(user.Phone) != 10 {
+	if len(incomingUser.Phone) != 10 {
 		http.Error(w, "Phone number must be exactly 10 digits", http.StatusBadRequest)
 		return
 	}
 
-	// Preserve immutable fields
-	user.Email = email
-	user.ID = email 
-	user.UpdatedAt = time.Now()
-	
-	// Preserve CreatedAt if it exists
-	if existing, _ := h.kv.Get("user:" + email); existing != nil {
-		var oldUser models.User
-		json.Unmarshal(existing, &oldUser)
-		user.CreatedAt = oldUser.CreatedAt
-		if user.ProfilePicURL == "" {
-			user.ProfilePicURL = oldUser.ProfilePicURL // Don't overwrite existing avatar with empty string
+	// Fetch existing user to preserve immutable/optional fields if they are omitted
+	existingData, _ := h.kv.Get("user:" + email)
+	var finalUser models.User
+
+	if existingData != nil {
+		json.Unmarshal(existingData, &finalUser)
+		// Preserve CreatedAt
+		incomingUser.CreatedAt = finalUser.CreatedAt
+		
+		// Preserve optional fields if incoming ones are empty
+		if incomingUser.RollNo == "" {
+			incomingUser.RollNo = finalUser.RollNo
+		}
+		if incomingUser.EmergencyContact == "" {
+			incomingUser.EmergencyContact = finalUser.EmergencyContact
+		}
+		if incomingUser.ProfilePicURL == "" {
+			incomingUser.ProfilePicURL = finalUser.ProfilePicURL
 		}
 	} else {
-		user.CreatedAt = time.Now()
+		// New signup flow
+		incomingUser.CreatedAt = time.Now()
 	}
 
-	data, err := json.Marshal(user)
+	// Enforce immutable fields
+	incomingUser.Email = email
+	incomingUser.ID = email 
+	incomingUser.UpdatedAt = time.Now()
+
+	data, err := json.Marshal(incomingUser)
 	if err != nil {
 		http.Error(w, "Internal server error", http.StatusInternalServerError)
 		return
@@ -167,7 +179,7 @@ func (h *UserHandler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	r.Body = http.MaxBytesReader(w, r.Body, 2<<20)
+	r.Body = http.MaxBytesReader(w, r.Body, 2<<20) // 2MB limit
 	if err := r.ParseMultipartForm(2 << 20); err != nil {
 		http.Error(w, "File too large or invalid form", http.StatusBadRequest)
 		return
