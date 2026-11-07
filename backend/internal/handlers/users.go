@@ -25,7 +25,6 @@ func NewUserHandler(cfg *config.Config, kv *storage.KVStore, r2 *storage.R2Clien
 	return &UserHandler{cfg: cfg, kv: kv, r2: r2}
 }
 
-// Helper to extract email from the Authorization header
 func (h *UserHandler) getAuthEmail(r *http.Request) (string, error) {
 	authHeader := r.Header.Get("Authorization")
 	if authHeader == "" || !strings.HasPrefix(authHeader, "Bearer ") {
@@ -35,7 +34,7 @@ func (h *UserHandler) getAuthEmail(r *http.Request) (string, error) {
 	return auth.VerifyJWT(tokenString, h.cfg.JWTSecret)
 }
 
-// CompleteSignup finalizes the user profile after Google Auth.
+// CompleteSignup (Kept for completeness, though Android uses PUT /users/me)
 func (h *UserHandler) CompleteSignup(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -54,17 +53,12 @@ func (h *UserHandler) CompleteSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Enforce constraints
 	if len(user.Phone) != 10 {
 		http.Error(w, "Phone number must be exactly 10 digits", http.StatusBadRequest)
 		return
 	}
-	if user.ProfilePicURL == "" {
-		http.Error(w, "Profile picture is required", http.StatusBadRequest)
-		return
-	}
 
-	user.ID = email // Use email as unique ID for now
+	user.ID = email
 	user.Email = email
 	user.CreatedAt = time.Now()
 	user.UpdatedAt = time.Now()
@@ -80,9 +74,7 @@ func (h *UserHandler) CompleteSignup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate fresh JWT with the new user ID
 	token, _ := auth.GenerateJWT(user.ID, user.Email, h.cfg.JWTSecret)
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(models.AuthResponse{
 		Token: token,
@@ -90,7 +82,6 @@ func (h *UserHandler) CompleteSignup(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-// GetProfile returns the authenticated user's profile.
 func (h *UserHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	email, err := h.getAuthEmail(r)
 	if err != nil {
@@ -108,7 +99,7 @@ func (h *UserHandler) GetProfile(w http.ResponseWriter, r *http.Request) {
 	w.Write(userData)
 }
 
-// UpdateProfile overwrites the user's profile fields.
+// UpdateProfile handles the initial signup JSON save AND profile text updates.
 func (h *UserHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -132,8 +123,22 @@ func (h *UserHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// Preserve immutable fields
 	user.Email = email
+	user.ID = email 
 	user.UpdatedAt = time.Now()
+	
+	// Preserve CreatedAt if it exists
+	if existing, _ := h.kv.Get("user:" + email); existing != nil {
+		var oldUser models.User
+		json.Unmarshal(existing, &oldUser)
+		user.CreatedAt = oldUser.CreatedAt
+		if user.ProfilePicURL == "" {
+			user.ProfilePicURL = oldUser.ProfilePicURL // Don't overwrite existing avatar with empty string
+		}
+	} else {
+		user.CreatedAt = time.Now()
+	}
 
 	data, err := json.Marshal(user)
 	if err != nil {
@@ -150,7 +155,6 @@ func (h *UserHandler) UpdateProfile(w http.ResponseWriter, r *http.Request) {
 	w.Write(data)
 }
 
-// UploadAvatar receives a multipart image, uploads to R2, and updates KV.
 func (h *UserHandler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
@@ -163,7 +167,6 @@ func (h *UserHandler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Limit upload size to 2MB (client should compress, but server protects itself)
 	r.Body = http.MaxBytesReader(w, r.Body, 2<<20)
 	if err := r.ParseMultipartForm(2 << 20); err != nil {
 		http.Error(w, "File too large or invalid form", http.StatusBadRequest)
@@ -183,17 +186,13 @@ func (h *UserHandler) UploadAvatar(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Generate unique R2 key
 	key := fmt.Sprintf("users/%s/avatar.webp", strings.ReplaceAll(email, "@", "_"))
-	
-	// Upload to R2
 	publicURL, err := h.r2.UploadFile(context.Background(), key, fileBytes, "image/webp")
 	if err != nil {
 		http.Error(w, "Failed to upload image", http.StatusInternalServerError)
 		return
 	}
 
-	// Update user profile in KV
 	userData, err := h.kv.Get("user:" + email)
 	if err != nil || userData == nil {
 		http.Error(w, "User not found", http.StatusNotFound)
