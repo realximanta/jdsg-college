@@ -8,45 +8,62 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
-fun AccountScreen() {
+fun AccountScreen(authViewModel: AuthViewModel) {
+    val currentUser by authViewModel.currentUser.collectAsState()
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Profile Picture Header
-        Box(
-            modifier = Modifier
-                .size(120.dp)
-                .clip(CircleShape)
-                .background(Color.LightGray),
-            contentAlignment = Alignment.Center
-        ) {
-            // Placeholder icon until Coil is wired up
-            Icon(
-                imageVector = Icons.Default.Person,
+        // Profile Picture
+        if (!currentUser?.profile_pic_url.isNullOrEmpty()) {
+            AsyncImage(
+                model = currentUser?.profile_pic_url,
                 contentDescription = "Profile Picture",
-                modifier = Modifier.size(64.dp),
-                tint = Color.White
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
             )
+        } else {
+            Box(
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "Profile Picture",
+                    modifier = Modifier.size(64.dp),
+                    tint = Color.White
+                )
+            }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
         // User Details
         Text(
-            text = "Full Name", // Placeholder
+            text = currentUser?.full_name ?: "Loading...",
             style = MaterialTheme.typography.headlineLarge,
             color = BluePrimary
         )
@@ -58,7 +75,7 @@ fun AccountScreen() {
             shape = RoundedCornerShape(16.dp)
         ) {
             Text(
-                text = "STUDENT", // Placeholder
+                text = currentUser?.role?.uppercase() ?: "",
                 style = MaterialTheme.typography.labelMedium,
                 color = TealAccent,
                 modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp),
@@ -69,8 +86,14 @@ fun AccountScreen() {
         Spacer(modifier = Modifier.height(24.dp))
 
         // Details List
-        ProfileDetailRow(label = "Class", value = "B.A. 1st Semester") // Placeholder
-        ProfileDetailRow(label = "Phone", value = "9876543210") // Placeholder
+        if (currentUser?.role == "student") {
+            ProfileDetailRow(label = "Class", value = currentUser?.class_name ?: "N/A")
+            ProfileDetailRow(label = "Semester", value = currentUser?.semester ?: "N/A")
+        } else {
+            ProfileDetailRow(label = "Department", value = currentUser?.department ?: "N/A")
+            ProfileDetailRow(label = "Designation", value = currentUser?.designation ?: "N/A")
+        }
+        ProfileDetailRow(label = "Phone", value = currentUser?.phone ?: "N/A")
 
         Spacer(modifier = Modifier.height(32.dp))
 
