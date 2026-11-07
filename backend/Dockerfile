@@ -1,5 +1,5 @@
 # Build stage
-FROM golang:1.22-alpine AS builder
+FROM golang:1.24-alpine AS builder
 
 WORKDIR /app
 
@@ -26,7 +26,7 @@ COPY --from=builder /app/main .
 # Copy the Python scripts directory
 COPY --from=builder /app/scripts ./scripts
 
-# Expose port (Render sets PORT env var)
+# Expose port
 EXPOSE 8080
 
 # Run the Go server
