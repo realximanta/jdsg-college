@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.screens
+package edu.jdsgcollege.bokakhat.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -18,9 +18,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
-import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
 fun AccountScreen(

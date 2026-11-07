@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.screens
+package edu.jdsgcollege.bokakhat.ui.screens
 
 import android.content.Intent
 import android.net.Uri
@@ -18,10 +18,10 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import in.edu.jdsgcollege.bokakhat.data.remote.Notification
-import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
-import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.NotificationViewModel
+import edu.jdsgcollege.bokakhat.data.remote.Notification
+import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import edu.jdsgcollege.bokakhat.ui.viewmodels.NotificationViewModel
 
 @Composable
 fun NotificationsScreen(viewModel: NotificationViewModel = viewModel()) {

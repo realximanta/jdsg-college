@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.screens
+package edu.jdsgcollege.bokakhat.ui.screens
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.theme
+package edu.jdsgcollege.bokakhat.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

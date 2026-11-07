@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.screens
+package edu.jdsgcollege.bokakhat.ui.screens
 
 import android.app.Activity
 import android.net.Uri
@@ -30,14 +30,14 @@ import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import in.edu.jdsgcollege.bokakhat.BuildConfig
-import in.edu.jdsgcollege.bokakhat.data.remote.AuthRequest
-import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
-import in.edu.jdsgcollege.bokakhat.data.remote.User
-import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
-import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
-import in.edu.jdsgcollege.bokakhat.utils.ImageUtils
+import edu.jdsgcollege.bokakhat.BuildConfig
+import edu.jdsgcollege.bokakhat.data.remote.AuthRequest
+import edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
+import edu.jdsgcollege.bokakhat.data.remote.User
+import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+import edu.jdsgcollege.bokakhat.utils.ImageUtils
 import kotlinx.coroutines.launch
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody

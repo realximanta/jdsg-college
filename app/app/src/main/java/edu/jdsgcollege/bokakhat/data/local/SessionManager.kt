@@ -1,11 +1,11 @@
-package in.edu.jdsgcollege.bokakhat.data.local
+package edu.jdsgcollege.bokakhat.data.local
 
 import android.content.Context
 import android.content.SharedPreferences
 import androidx.security.crypto.EncryptedSharedPreferences
 import androidx.security.crypto.MasterKey
 import com.google.gson.Gson
-import in.edu.jdsgcollege.bokakhat.data.remote.User
+import edu.jdsgcollege.bokakhat.data.remote.User
 
 class SessionManager(context: Context) {
     private val masterKey = MasterKey.Builder(context)

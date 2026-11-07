@@ -1,9 +1,9 @@
-package in.edu.jdsgcollege.bokakhat.ui.viewmodels
+package edu.jdsgcollege.bokakhat.ui.viewmodels
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import in.edu.jdsgcollege.bokakhat.data.remote.Notification
-import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
+import edu.jdsgcollege.bokakhat.data.remote.Notification
+import edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.ui.screens
+package edu.jdsgcollege.bokakhat.ui.screens
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -15,8 +15,8 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
     object Home : BottomNavItem("home", Icons.Default.Home, "Home")

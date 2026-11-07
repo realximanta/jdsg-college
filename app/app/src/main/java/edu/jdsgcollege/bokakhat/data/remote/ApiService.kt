@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.data.remote
+package edu.jdsgcollege.bokakhat.data.remote
 
 import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody

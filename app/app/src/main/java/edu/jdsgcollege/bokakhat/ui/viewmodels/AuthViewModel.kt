@@ -1,11 +1,11 @@
-package in.edu.jdsgcollege.bokakhat.ui.viewmodels
+package edu.jdsgcollege.bokakhat.ui.viewmodels
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import in.edu.jdsgcollege.bokakhat.data.local.SessionManager
-import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
-import in.edu.jdsgcollege.bokakhat.data.remote.User
+import edu.jdsgcollege.bokakhat.data.local.SessionManager
+import edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
+import edu.jdsgcollege.bokakhat.data.remote.User
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

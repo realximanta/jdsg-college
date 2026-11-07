@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat
+package edu.jdsgcollege.bokakhat
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,9 +10,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.compose.viewModel
-import in.edu.jdsgcollege.bokakhat.navigation.AppNavigation
-import in.edu.jdsgcollege.bokakhat.ui.theme.JDSGCollegeTheme
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+import edu.jdsgcollege.bokakhat.navigation.AppNavigation
+import edu.jdsgcollege.bokakhat.ui.theme.JDSGCollegeTheme
+import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -1,15 +1,15 @@
-package in.edu.jdsgcollege.bokakhat.navigation
+package edu.jdsgcollege.bokakhat.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import in.edu.jdsgcollege.bokakhat.ui.screens.AboutScreen
-import in.edu.jdsgcollege.bokakhat.ui.screens.AuthScreen
-import in.edu.jdsgcollege.bokakhat.ui.screens.DashboardScreen
-import in.edu.jdsgcollege.bokakhat.ui.screens.LandingScreen
-import in.edu.jdsgcollege.bokakhat.ui.screens.UpdateProfileScreen
-import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+import edu.jdsgcollege.bokakhat.ui.screens.AboutScreen
+import edu.jdsgcollege.bokakhat.ui.screens.AuthScreen
+import edu.jdsgcollege.bokakhat.ui.screens.DashboardScreen
+import edu.jdsgcollege.bokakhat.ui.screens.LandingScreen
+import edu.jdsgcollege.bokakhat.ui.screens.UpdateProfileScreen
+import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
 fun AppNavigation(

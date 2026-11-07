@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.utils
+package edu.jdsgcollege.bokakhat.utils
 
 import android.content.Context
 import android.graphics.Bitmap

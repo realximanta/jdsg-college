@@ -1,4 +1,4 @@
-package in.edu.jdsgcollege.bokakhat.data.remote
+package edu.jdsgcollege.bokakhat.data.remote
 
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
