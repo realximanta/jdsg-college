@@ -6,7 +6,6 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Read local.properties for the Web Client ID
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
@@ -22,12 +21,10 @@ android {
         applicationId = "in.edu.jdsgcollege.bokakhat"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "0.1.0"
+        versionCode = 1
+        versionName = "1.0.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        
-        // Inject the Web Client ID into the app
         buildConfigField("String", "WEB_CLIENT_ID", "\"$webClientId\"")
     }
 
@@ -46,10 +43,7 @@ android {
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             if (System.getenv("KEYSTORE_PATH") != null) {
                 signingConfig = signingConfigs.getByName("release")
             }
@@ -64,7 +58,7 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true // Enable BuildConfig generation
+        buildConfig = true
     }
 }
 
@@ -80,12 +74,13 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.navigation.compose)
 
+    // EXTENDED ICONS (Fixes the missing Schedule/AddAPhoto errors)
+    implementation("androidx.compose.material:material-icons-extended")
+
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
-
     implementation(libs.coil.compose)
-
     implementation(libs.play.services.auth)
     implementation(libs.androidx.security.crypto)
     implementation(libs.androidx.datastore.preferences)
@@ -94,6 +89,5 @@ dependencies {
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(platform(libs.androidx.compose.bom))
-    
     debugImplementation(libs.androidx.ui.tooling)
 }
