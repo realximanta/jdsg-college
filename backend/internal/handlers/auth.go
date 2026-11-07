@@ -46,13 +46,16 @@ func (h *AuthHandler) GoogleLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if userData == nil {
-		// User doesn't exist, tell client to show signup form
+		// User doesn't exist. Generate a temporary JWT so the app can authenticate the /api/users call.
+		signupToken, _ := auth.GenerateJWT(email, email, h.cfg.JWTSecret)
+		
 		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
 		json.NewEncoder(w).Encode(map[string]interface{}{
 			"exists": false,
 			"email":  email,
 			"name":   name,
+			"token":  signupToken,
 		})
 		return
 	}
