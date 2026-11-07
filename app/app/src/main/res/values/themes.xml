@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Base application theme. This is mostly for the splash screen and window background 
-         before Compose takes over. -->
+    <!-- Base application theme. -->
     <style name="Theme.JDSGCollege" parent="android:Theme.Material.Light.NoActionBar">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
