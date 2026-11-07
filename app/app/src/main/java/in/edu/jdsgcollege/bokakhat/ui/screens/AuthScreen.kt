@@ -35,8 +35,12 @@ import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
 import in.edu.jdsgcollege.bokakhat.data.remote.User
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 import in.edu.jdsgcollege.bokakhat.utils.ImageUtils
 import kotlinx.coroutines.launch
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MultipartBody
+import okhttp3.RequestBody.Companion.asRequestBody
 import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -45,7 +49,7 @@ fun AuthScreen(
     isLogin: Boolean,
     onBackClick: () -> Unit,
     onAuthSuccess: (String, User) -> Unit,
-    authViewModel: in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
+    authViewModel: AuthViewModel
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -55,31 +59,29 @@ fun AuthScreen(
     var isGoogleAuthenticated by remember { mutableStateOf(false) }
     var googleEmail by remember { mutableStateOf("") }
     var googleName by remember { mutableStateOf("") }
+    var tempToken by remember { mutableStateOf("") } // JWT from backend for signup
     
     // Form State
     var selectedRole by remember { mutableStateOf("student") }
     var phone by remember { mutableStateOf("") }
     var classSelection by remember { mutableStateOf("") }
+    var semester by remember { mutableStateOf("") }
     var deptSelection by remember { mutableStateOf("") }
+    var designation by remember { mutableStateOf("") }
     
     // Image State
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var compressedImageFile by remember { mutableStateOf<File?>(null) }
 
-    // Image Picker Launcher
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
         uri?.let {
             selectedImageUri = it
             compressedImageFile = ImageUtils.compressImageToWebp(context, it)
-            if (compressedImageFile == null) {
-                Toast.makeText(context, "Failed to compress image", Toast.LENGTH_SHORT).show()
-            }
         }
     }
 
-    // Google Sign-In Launcher
     val launcher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -100,6 +102,7 @@ fun AuthScreen(
                                 } else {
                                     googleEmail = body?.email ?: ""
                                     googleName = body?.name ?: ""
+                                    tempToken = body?.token ?: "" // Capture the signup token
                                     isGoogleAuthenticated = true
                                 }
                             } else {
@@ -147,7 +150,7 @@ fun AuthScreen(
             if (isLoading) {
                 CircularProgressIndicator(color = BluePrimary)
                 Spacer(Modifier.height(16.dp))
-                Text("Connecting...", color = BluePrimary)
+                Text("Processing...", color = BluePrimary)
             } else if (!isGoogleAuthenticated) {
                 Spacer(modifier = Modifier.height(64.dp))
                 Text(
@@ -185,7 +188,6 @@ fun AuthScreen(
                 )
                 Spacer(modifier = Modifier.height(24.dp))
 
-                // Profile Picture Picker UI
                 Box(
                     modifier = Modifier
                         .size(100.dp)
@@ -202,17 +204,12 @@ fun AuthScreen(
                             modifier = Modifier.fillMaxSize()
                         )
                     } else {
-                        Icon(
-                            imageVector = Icons.Default.AddAPhoto,
-                            contentDescription = "Add Photo",
-                            tint = Color.White
-                        )
+                        Icon(Icons.Default.AddAPhoto, contentDescription = "Add Photo", tint = Color.White)
                     }
                 }
                 Text("Tap to add photo*", style = MaterialTheme.typography.labelMedium, color = TealAccent)
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Role Selection
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
                     FilterChip(
                         selected = selectedRole == "student",
@@ -227,7 +224,6 @@ fun AuthScreen(
                 }
                 Spacer(modifier = Modifier.height(16.dp))
 
-                // Common Fields
                 OutlinedTextField(
                     value = googleName, 
                     onValueChange = { googleName = it }, 
@@ -245,7 +241,6 @@ fun AuthScreen(
                 
                 Spacer(modifier = Modifier.height(8.dp))
 
-                // Role Specific Fields
                 if (selectedRole == "student") {
                     OutlinedTextField(
                         value = classSelection, 
@@ -255,8 +250,8 @@ fun AuthScreen(
                     )
                     Spacer(modifier = Modifier.height(8.dp))
                     OutlinedTextField(
-                        value = "", // Semester logic here
-                        onValueChange = {}, 
+                        value = semester, 
+                        onValueChange = { semester = it }, 
                         label = { Text("Semester (If B.A./B.Com)*") }, 
                         modifier = Modifier.fillMaxWidth()
                     )
@@ -267,31 +262,62 @@ fun AuthScreen(
                         label = { Text("Department*") }, 
                         modifier = Modifier.fillMaxWidth()
                     )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = designation, 
+                        onValueChange = { designation = it }, 
+                        label = { Text("Designation*") }, 
+                        modifier = Modifier.fillMaxWidth()
+                    )
                 }
 
                 Spacer(modifier = Modifier.height(24.dp))
                 
                 Button(
                     onClick = {
-                        if (phone.length != 10) {
-                            Toast.makeText(context, "Phone must be 10 digits", Toast.LENGTH_SHORT).show()
-                            return@Button
-                        }
-                        if (compressedImageFile == null) {
-                            Toast.makeText(context, "Profile picture is required", Toast.LENGTH_SHORT).show()
+                        if (phone.length != 10 || fullNameIsInvalid(googleName) || compressedImageFile == null) {
+                            Toast.makeText(context, "Please fill all required fields & add a photo", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
                         
                         isLoading = true
                         scope.launch {
-                            kotlinx.coroutines.delay(1000)
-                            isLoading = false
-                            // TODO: Connect to the actual backend multipart upload endpoint
-                            val mockUser = User(
-                                id = "1", email = googleEmail, full_name = googleName,
-                                role = selectedRole, phone = phone, profile_pic_url = "https://placeholder.com/img.webp"
-                            )
-                            onAuthSuccess("mock_jwt_token", mockUser)
+                            try {
+                                // 1. Create User Record in KV
+                                val newUser = User(
+                                    id = "", email = googleEmail, full_name = googleName,
+                                    role = selectedRole, phone = phone, profile_pic_url = "",
+                                    class_name = if (selectedRole == "student") classSelection else null,
+                                    semester = if (selectedRole == "student") semester else null,
+                                    department = if (selectedRole == "teacher") deptSelection else null,
+                                    designation = if (selectedRole == "teacher") designation else null
+                                )
+                                
+                                val signupResponse = RetrofitClient.apiService.updateProfile("Bearer $tempToken", newUser)
+                                if (!signupResponse.isSuccessful) {
+                                    Toast.makeText(context, "Failed to create profile", Toast.LENGTH_SHORT).show()
+                                    return@launch
+                                }
+
+                                // 2. Upload Avatar to R2
+                                val filePart = MultipartBody.Part.createFormData(
+                                    "avatar", 
+                                    compressedImageFile!!.name, 
+                                    compressedImageFile!!.asRequestBody("image/webp".toMediaTypeOrNull())
+                                )
+                                val avatarResponse = RetrofitClient.apiService.uploadAvatar("Bearer $tempToken", filePart)
+                                
+                                if (avatarResponse.isSuccessful && avatarResponse.body() != null) {
+                                    // 3. Complete Login Session
+                                    onAuthSuccess(tempToken, avatarResponse.body()!!)
+                                } else {
+                                    Toast.makeText(context, "Failed to upload avatar", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Toast.makeText(context, "Network error: ${e.message}", Toast.LENGTH_SHORT).show()
+                            } finally {
+                                isLoading = false
+                            }
                         }
                     },
                     modifier = Modifier.fillMaxWidth().height(50.dp),
@@ -303,4 +329,8 @@ fun AuthScreen(
             }
         }
     }
+}
+
+private fun fullNameIsInvalid(name: String): Boolean {
+    return name.trim().isEmpty()
 }
