@@ -5,10 +5,19 @@ import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
 
-// Data classes matching the Go backend
+// Matches backend models.AuthRequest
 data class AuthRequest(val id_token: String)
-data class AuthResponse(val exists: Boolean? = null, val token: String? = null, val user: User? = null, val email: String? = null, val name: String? = null)
 
+// Matches backend map response in auth.go
+data class AuthResponse(
+    val exists: Boolean? = null, 
+    val token: String? = null, 
+    val user: User? = null, 
+    val email: String? = null, 
+    val name: String? = null
+)
+
+// Matches backend models.User
 data class User(
     val id: String,
     val email: String,
@@ -21,9 +30,12 @@ data class User(
     val department: String? = null,
     val designation: String? = null,
     val phone: String,
-    val profile_pic_url: String
+    val profile_pic_url: String,
+    val created_at: String? = null,
+    val updated_at: String? = null
 )
 
+// Matches backend handlers.Notification
 data class Notification(val title: String, val url: String, val date: String)
 
 interface ApiService {
