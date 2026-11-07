@@ -17,7 +17,10 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
     private val _currentUser = MutableStateFlow<User?>(sessionManager.getUser())
     val currentUser: StateFlow<User?> = _currentUser.asStateFlow()
 
-    // Call this after a successful login/signup API call
+    fun getToken(): String? {
+        return sessionManager.getToken()
+    }
+
     fun updateSession(token: String, user: User) {
         sessionManager.saveSession(token, user)
         _currentUser.value = user
@@ -28,7 +31,6 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
         _currentUser.value = null
     }
     
-    // Placeholder for fetching fresh profile data
     fun refreshProfile() {
         val token = sessionManager.getToken() ?: return
         viewModelScope.launch {
@@ -40,7 +42,7 @@ class AuthViewModel(application: Application) : AndroidViewModel(application) {
                     _currentUser.value = user
                 }
             } catch (e: Exception) {
-                // Handle network error silently or log
+                // Handle network error silently
             }
         }
     }
