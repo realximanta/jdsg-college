@@ -1,31 +1,126 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JDSG College</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <!-- Animate On Scroll -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <!-- Google Sign-In -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        institutional: '#1E3A8A',
+                        tealaccent: '#0284C7',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['Playfair Display', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased">
-    <nav class="bg-white shadow-sm">
-        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
-            <h1 class="text-2xl font-bold text-blue-900">JDSG College</h1>
-            <div class="space-x-4">
-                <a href="/privacy.html" class="text-sm text-slate-600 hover:text-blue-600">Privacy</a>
-                <a href="/terms.html" class="text-sm text-slate-600 hover:text-blue-600">Terms</a>
+<body class="bg-slate-50 text-slate-800 antialiased overflow-x-hidden">
+
+    <!-- Navigation -->
+    <nav class="bg-white/80 backdrop-blur-md fixed w-full z-50 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <h1 class="text-2xl font-serif font-bold text-institutional">JDSG College</h1>
+            <div class="space-x-4 flex items-center">
+                <a href="privacy.html" class="text-sm text-slate-600 hover:text-institutional transition">Privacy</a>
+                <a href="terms.html" class="text-sm text-slate-600 hover:text-institutional transition">Terms</a>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-4 mt-16 text-center">
-        <h2 class="text-5xl font-extrabold text-blue-900 mb-4">Learn • Grow • Achieve</h2>
-        <p class="text-lg text-slate-600 mb-8 max-w-2xl mx-auto">
-            The official digital portal for Jogananda Deva Satradhikar Goswami (JDSG) College, Bokakhat. 
-            Access notifications, manage your profile, and stay connected with the institution.
-        </p>
-        <a href="#" class="bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold hover:bg-blue-800 transition">
-            Download the Android App
-        </a>
+    <!-- Hero Section -->
+    <main class="pt-24 pb-12 px-4">
+        <div class="max-w-4xl mx-auto text-center" data-aos="fade-up" data-aos-duration="1000">
+            <h2 class="text-5xl md:text-7xl font-extrabold text-institutional mb-6 tracking-tight">
+                Learn • Grow • Achieve
+            </h2>
+            <p class="text-lg md:text-xl text-slate-600 mb-10 max-w-2xl mx-auto leading-relaxed">
+                The official digital portal for Jogananda Deva Satradharikar Goswami (JDSG) College, Bokakhat. 
+                Access notifications, manage your profile, and stay connected.
+            </p>
+
+            <!-- The Auth Section -->
+            <div id="auth-container" class="bg-white p-8 rounded-2xl shadow-xl max-w-md mx-auto transition-all duration-500">
+                <div id="google-login-section">
+                    <h3 class="text-2xl font-semibold mb-6">Welcome</h3>
+                    <p class="text-slate-500 mb-6 text-sm">Sign in with your Google account to continue.</p>
+                    <!-- Google Sign In Button -->
+                    <div id="g_id_onload"
+                         data-client_id="YOUR_WEB_CLIENT_ID.apps.googleusercontent.com"
+                         data-callback="handleCredentialResponse"
+                         data-auto_prompt="false">
+                    </div>
+                    <div class="g_id_signin flex justify-center" 
+                         data-type="standard" 
+                         data-size="large" 
+                         data-theme="outline" 
+                         data-text="sign_in_with" 
+                         data-shape="rectangular" 
+                         data-logo_alignment="left">
+                    </div>
+                </div>
+
+                <!-- Signup Form (Hidden by default) -->
+                <div id="signup-section" class="hidden text-left">
+                    <h3 class="text-2xl font-semibold mb-2">Complete Profile</h3>
+                    <p id="signup-email" class="text-sm text-tealaccent mb-6 font-medium"></p>
+                    
+                    <form id="signup-form" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Full Name*</label>
+                            <input type="text" id="full_name" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-institutional outline-none transition">
+                        </div>
+                        
+                        <div class="flex space-x-4">
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Role*</label>
+                                <select id="role" class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-institutional outline-none bg-white">
+                                    <option value="student">Student</option>
+                                    <option value="teacher">Teacher</option>
+                                </select>
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-sm font-medium text-slate-700 mb-1">Phone*</label>
+                                <input type="tel" id="phone" maxlength="10" required class="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-institutional outline-none transition">
+                            </div>
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-medium text-slate-700 mb-1">Profile Picture*</label>
+                            <input type="file" id="avatar" accept="image/*" required class="w-full px-4 py-2 border rounded-lg text-sm file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-institutional file:text-white hover:file:bg-blue-900 transition">
+                        </div>
+
+                        <button type="submit" class="w-full bg-institutional text-white py-3 rounded-lg font-semibold hover:bg-blue-900 transition mt-4">
+                            Complete Sign Up
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
     </main>
+
+    <!-- College Image -->
+    <section class="max-w-6xl mx-auto px-4 py-12" data-aos="fade-up">
+        <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG Campus" class="w-full h-96 object-cover rounded-2xl shadow-2xl">
+    </section>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="app.js"></script>
 </body>
 </html>
