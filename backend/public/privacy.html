@@ -1,31 +1,51 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Privacy Policy - JDSG College</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: { institutional: '#1E3A8A', tealaccent: '#0284C7' },
+                    fontFamily: { sans: ['Inter', 'sans-serif'], serif: ['Playfair Display', 'serif'] }
+                }
+            }
+        }
+    </script>
 </head>
-<body class="bg-slate-50 text-slate-800 font-sans antialiased p-8">
-    <div class="max-w-3xl mx-auto bg-white p-8 rounded-lg shadow-sm">
-        <h1 class="text-3xl font-bold text-blue-900 mb-6">Privacy Policy</h1>
-        <p class="mb-4">Last updated: November 2026</p>
-        <p class="mb-4">This Privacy Policy explains how the JDSG College App collects, uses, and protects your information.</p>
+<body class="bg-slate-50 text-slate-800 antialiased p-6 md:p-12 min-h-screen">
+    <div class="max-w-3xl mx-auto bg-white p-8 md:p-12 rounded-2xl shadow-lg">
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-institutional mb-6">Privacy Policy</h1>
+        <p class="text-sm text-slate-500 mb-8 border-b pb-4">Last updated: November 2026</p>
         
-        <h2 class="text-xl font-bold mt-6 mb-2">1. Information We Collect</h2>
-        <ul class="list-disc pl-5 mb-4">
-            <li>Google Account Information (Name, Email)</li>
-            <li>Profile Details (Role, Class/Department, Phone Number)</li>
-            <li>Profile Picture</li>
-        </ul>
+        <div class="space-y-6 text-slate-700 leading-relaxed">
+            <section>
+                <h2 class="text-xl font-bold text-slate-900 mb-2">1. Information We Collect</h2>
+                <p>When you sign in using Google, we collect your basic profile information (Name, Email Address). During signup, we also collect your Role, Phone Number, and Profile Picture. This data is securely stored to provide you with a personalized experience.</p>
+            </section>
 
-        <h2 class="text-xl font-bold mt-6 mb-2">2. How We Use It</h2>
-        <p class="mb-4">Your data is used solely to provide a personalized experience within the app, such as displaying your profile and allowing teachers/students to be identified.</p>
+            <section>
+                <h2 class="text-xl font-bold text-slate-900 mb-2">2. How We Use Your Data</h2>
+                <p>Your data is used strictly for institutional purposes—to identify you within the app, display your profile, and allow access to college notifications. We do not sell or share your data with third-party advertisers.</p>
+            </section>
 
-        <h2 class="text-xl font-bold mt-6 mb-2">3. Data Storage</h2>
-        <p class="mb-4">Images are stored securely on Cloudflare R2. Metadata is stored on Cloudflare Workers KV.</p>
+            <section>
+                <h2 class="text-xl font-bold text-slate-900 mb-2">3. Data Storage & Security</h2>
+                <p>Images are securely hosted on Cloudflare R2, while profile metadata is stored in Cloudflare Workers KV. Your session is managed via a secure JWT token. We employ industry-standard security measures to protect your information.</p>
+            </section>
+        </div>
 
-        <a href="/" class="text-blue-600 hover:underline mt-8 inline-block">← Back to Home</a>
+        <div class="mt-12 pt-6 border-t">
+            <a href="index.html" class="inline-flex items-center text-institutional font-semibold hover:text-blue-900 transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Portal
+            </a>
+        </div>
     </div>
 </body>
 </html>
