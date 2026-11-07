@@ -53,6 +53,10 @@ func main() {
 	// Notification Routes
 	mux.HandleFunc("GET /api/notifications", notifHandler.GetNotifications)
 
+	// Serve Static Files (Web Portal / OAuth Branding)
+	fs := http.FileServer(http.Dir("./public"))
+	mux.Handle("/", fs)
+
 	// Wrap the mux with CORS middleware
 	corsHandler := middleware.CORS(mux)
 
