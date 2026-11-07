@@ -1,0 +1,44 @@
+name: Refactor Package Structure
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  refactor:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Move Folders (in -> edu)
+        run: |
+          # Create the new 'edu' directory
+          mkdir -p app/app/src/main/java/edu
+          
+          # Move the jdsgcollege folder to the new location
+          mv app/app/src/main/java/in/edu/jdsgcollege app/app/src/main/java/edu/
+          
+          # Remove the old empty 'in' directory
+          rm -rf app/app/src/main/java/in
+          
+          echo "Folder structure updated."
+
+      - name: Find and Replace Package Names in Kotlin Files
+        run: |
+          # Find all .kt files and replace the package string
+          find app/app/src/main/java -type f -name "*.kt" -exec sed -i 's/in\.edu\.jdsgcollege\.bokakhat/edu.jdsgcollege.bokakhat/g' {} +
+          echo "Package names replaced in all .kt files."
+
+      - name: Commit and Push Changes
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add app/app/src/main/java/
+          git commit -m "refactor: move package root from 'in.edu' to 'edu' to fix Kotlin keyword clash"
+          git push origin HEAD:main
