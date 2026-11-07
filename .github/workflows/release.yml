@@ -22,16 +22,28 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Validate Secrets
+        run: |
+          if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ]; then echo "::error::KEYSTORE_BASE64 is missing"; exit 1; fi
+          if [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then echo "::error::KEYSTORE_PASSWORD is missing"; exit 1; fi
+          if [ -z "${{ secrets.KEY_ALIAS }}" ]; then echo "::error::KEY_ALIAS is missing"; exit 1; fi
+          if [ -z "${{ secrets.KEY_PASSWORD }}" ]; then echo "::error::KEY_PASSWORD is missing"; exit 1; fi
+          if [ -z "${{ secrets.WEB_CLIENT_ID }}" ]; then echo "::error::WEB_CLIENT_ID is missing"; exit 1; fi
+          echo "All required secrets are present."
+
       - name: Validate tag format and extract version
         id: ver
         run: |
           TAG="${{ github.event.release.tag_name }}"
-          VERSION="${TAG#v}"
+          TAG_LOWER=$(echo "$TAG" | tr '[:upper:]' '[:lower:]')
+          VERSION="${TAG_LOWER#v}"
+          
           if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::error::Tag '$TAG' is not vMAJOR.MINOR.PATCH"
             exit 1
           fi
-          echo "tag=$TAG"       >> $GITHUB_OUTPUT
+          
+          echo "tag=v$VERSION"       >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
       - name: Read current version from build.gradle.kts
@@ -94,7 +106,6 @@ jobs:
 
       - name: Restore Keystore & local.properties
         run: |
-          # Use $GITHUB_WORKSPACE for absolute path reliability
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/release.keystore
           chmod 600 $GITHUB_WORKSPACE/release.keystore
           test -s $GITHUB_WORKSPACE/release.keystore || { echo "::error::keystore decoded to empty file"; exit 1; }
@@ -104,7 +115,6 @@ jobs:
 
       - name: Build signed release APK
         env:
-          # Pass the absolute path directly
           KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
@@ -129,6 +139,6 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           files: ${{ steps.apk.outputs.path }}
-          tag_name: ${{ steps.ver.outputs.tag }}
+          tag_name: ${{ github.event.release.tag_name }}
           fail_on_unmatched_files: true
           overwrite_files: true
