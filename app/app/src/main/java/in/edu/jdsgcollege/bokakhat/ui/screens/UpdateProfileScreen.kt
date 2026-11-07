@@ -1,6 +1,7 @@
 package in.edu.jdsgcollege.bokakhat.ui.screens
 
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -25,6 +26,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
+import in.edu.jdsgcollege.bokakhat.data.remote.User
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
@@ -119,7 +122,6 @@ fun UpdateProfileScreen(
                     Icon(Icons.Default.AddAPhoto, contentDescription = "Add Photo", tint = Color.White)
                 }
                 
-                // Overlay to show it's clickable
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -132,7 +134,7 @@ fun UpdateProfileScreen(
             Text("Tap to change photo", style = MaterialTheme.typography.labelMedium, color = TealAccent)
             Spacer(modifier = Modifier.height(24.dp))
 
-            // Form Fields (Validated)
+            // Form Fields
             OutlinedTextField(
                 value = fullName,
                 onValueChange = { fullName = it },
@@ -208,12 +210,48 @@ fun UpdateProfileScreen(
                         return@Button
                     }
                     
+                    val token = authViewModel.getToken()
+                    if (token == null) {
+                        Toast.makeText(context, "Session expired. Please login again.", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+
                     isLoading = true
                     scope.launch {
-                        kotlinx.coroutines.delay(1000) // Mock API call
-                        isLoading = false
-                        Toast.makeText(context, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
-                        onUpdateSuccess()
+                        try {
+                            // 1. Prepare updated user object
+                            val updatedUser = User(
+                                id = currentUser?.id ?: "",
+                                email = currentUser?.email ?: "",
+                                full_name = fullName,
+                                role = selectedRole,
+                                class_name = if (selectedRole == "student") classSelection else null,
+                                semester = if (selectedRole == "student") semester else null,
+                                roll_no = currentUser?.roll_no,
+                                emergency_contact = currentUser?.emergency_contact,
+                                department = if (selectedRole == "teacher") deptSelection else null,
+                                designation = if (selectedRole == "teacher") designation else null,
+                                phone = phone,
+                                profile_pic_url = currentUser?.profile_pic_url ?: ""
+                            )
+
+                            // 2. Call API
+                            val response = RetrofitClient.apiService.updateProfile("Bearer $token", updatedUser)
+                            
+                            if (response.isSuccessful && response.body() != null) {
+                                // 3. Update session and trigger success callback
+                                authViewModel.updateSession(token, response.body()!!)
+                                Toast.makeText(context, "Profile Updated Successfully", Toast.LENGTH_SHORT).show()
+                                onUpdateSuccess()
+                            } else {
+                                Toast.makeText(context, "Failed: ${response.code()}", Toast.LENGTH_SHORT).show()
+                            }
+                        } catch (e: Exception) {
+                            Log.e("UpdateProfile", "Error", e)
+                            Toast.makeText(context, "Network error occurred", Toast.LENGTH_SHORT).show()
+                        } finally {
+                            isLoading = false
+                        }
                     }
                 },
                 modifier = Modifier
