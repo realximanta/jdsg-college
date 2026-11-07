@@ -8,6 +8,7 @@ import in.edu.jdsgcollege.bokakhat.ui.screens.AboutScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.AuthScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.DashboardScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.LandingScreen
+import in.edu.jdsgcollege.bokakhat.ui.screens.UpdateProfileScreen
 import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
@@ -62,7 +63,18 @@ fun AppNavigation(
         }
         
         composable("dashboard") {
-            DashboardScreen(authViewModel = authViewModel) 
+            DashboardScreen(
+                authViewModel = authViewModel,
+                onNavigateToUpdateProfile = { navController.navigate("update_profile") }
+            ) 
+        }
+
+        composable("update_profile") {
+            UpdateProfileScreen(
+                authViewModel = authViewModel,
+                onBackClick = { navController.popBackStack() },
+                onUpdateSuccess = { navController.popBackStack() }
+            )
         }
     }
 }
