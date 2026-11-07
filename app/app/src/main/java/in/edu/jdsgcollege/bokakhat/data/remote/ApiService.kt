@@ -1,5 +1,6 @@
 package in.edu.jdsgcollege.bokakhat.data.remote
 
+import com.google.gson.annotations.SerializedName
 import okhttp3.MultipartBody
 import retrofit2.Response
 import retrofit2.http.*
@@ -13,7 +14,7 @@ data class User(
     val email: String,
     val full_name: String,
     val role: String,
-    val class_name: String? = null,
+    @SerializedName("class") val class_name: String? = null,
     val semester: String? = null,
     val roll_no: String? = null,
     val emergency_contact: String? = null,
