@@ -6,20 +6,23 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
+// Load local.properties for local builds
 val localProperties = Properties()
 val localPropertiesFile = rootProject.file("local.properties")
 if (localPropertiesFile.exists()) {
     localPropertiesFile.inputStream().use { localProperties.load(it) }
 }
 
-val webClientId = System.getenv("WEB_CLIENT_ID") 
+// Fetch Web Client ID
+val webClientId = System.getenv("WEB_CLIENT_ID")?.takeIf { it.isNotBlank() } 
     ?: localProperties.getProperty("WEB_CLIENT_ID") 
     ?: "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com"
 
-val keystorePath = System.getenv("KEYSTORE_PATH") ?: localProperties.getProperty("KEYSTORE_PATH")
-val keystorePassword = System.getenv("KEYSTORE_PASSWORD") ?: localProperties.getProperty("KEYSTORE_PASSWORD")
-val keyAlias = System.getenv("KEY_ALIAS") ?: localProperties.getProperty("KEY_ALIAS")
-val keyPassword = System.getenv("KEY_PASSWORD") ?: localProperties.getProperty("KEY_PASSWORD")
+// Fetch Keystore Credentials (Env Vars for CI, local.properties for Local)
+val keystorePath = System.getenv("KEYSTORE_PATH")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEYSTORE_PATH")
+val keystorePassword = System.getenv("KEYSTORE_PASSWORD")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEYSTORE_PASSWORD")
+val keyAlias = System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEY_ALIAS")
+val keyPassword = System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() } ?: localProperties.getProperty("KEY_PASSWORD")
 
 android {
     // FIXED: Removed the reserved 'in' keyword from the package namespace
@@ -41,11 +44,12 @@ android {
 
     signingConfigs {
         create("release") {
-            if (keystorePath != null && keystorePath.isNotEmpty()) {
+            // Only configure signing if all fields are present and not empty
+            if (!keystorePath.isNullOrBlank() && !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()) {
                 storeFile = file(keystorePath)
                 storePassword = keystorePassword
                 keyAlias = keyAlias
-                keyPassword = keyPassword
+                this.keyPassword = keyPassword
             }
         }
     }
@@ -54,7 +58,8 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            if (keystorePath != null && keystorePath.isNotEmpty()) {
+            // Apply signing config only if it was successfully configured
+            if (!keystorePath.isNullOrBlank() && !keystorePassword.isNullOrBlank() && !keyAlias.isNullOrBlank() && !keyPassword.isNullOrBlank()) {
                 signingConfig = signingConfigs.getByName("release")
             }
         }
