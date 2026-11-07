@@ -20,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import in.edu.jdsgcollege.bokakhat.BuildConfig
 import in.edu.jdsgcollege.bokakhat.data.remote.AuthRequest
 import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
 import in.edu.jdsgcollege.bokakhat.data.remote.User
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
-import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -33,7 +33,7 @@ fun AuthScreen(
     isLogin: Boolean,
     onBackClick: () -> Unit,
     onAuthSuccess: (String, User) -> Unit,
-    webClientId: String = "YOUR_WEB_CLIENT_ID.apps.googleusercontent.com" // Must be replaced with actual Web Client ID
+    authViewModel: in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
@@ -133,8 +133,9 @@ fun AuthScreen(
                 
                 Button(
                     onClick = {
+                        // Use the injected Web Client ID from BuildConfig
                         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                            .requestIdToken(webClientId)
+                            .requestIdToken(BuildConfig.WEB_CLIENT_ID)
                             .requestEmail()
                             .build()
                         val client = GoogleSignIn.getClient(context, gso)
@@ -147,7 +148,7 @@ fun AuthScreen(
                     Text("Continue with Google", fontWeight = FontWeight.Bold)
                 }
             } else {
-                // Signup Form (Shown after Google Auth if it's a new user)
+                // Signup Form
                 Text(
                     text = "Complete Your Profile",
                     style = MaterialTheme.typography.headlineLarge,
@@ -226,10 +227,9 @@ fun AuthScreen(
                             return@Button
                         }
                         // TODO: Call the backend /api/users endpoint with the form data
-                        // For now, we simulate a successful signup to test UI
                         isLoading = true
                         scope.launch {
-                            kotlinx.coroutines.delay(1000) // Mock network delay
+                            kotlinx.coroutines.delay(1000)
                             isLoading = false
                             val mockUser = User(
                                 id = "1", email = googleEmail, full_name = googleName,
