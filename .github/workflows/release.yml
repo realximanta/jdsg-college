@@ -22,27 +22,16 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Validate Secrets
-        run: |
-          if [ -z "${{ secrets.KEYSTORE_BASE64 }}" ]; then echo "::error::KEYSTORE_BASE64 is missing"; exit 1; fi
-          if [ -z "${{ secrets.KEYSTORE_PASSWORD }}" ]; then echo "::error::KEYSTORE_PASSWORD is missing"; exit 1; fi
-          if [ -z "${{ secrets.KEY_ALIAS }}" ]; then echo "::error::KEY_ALIAS is missing"; exit 1; fi
-          if [ -z "${{ secrets.KEY_PASSWORD }}" ]; then echo "::error::KEY_PASSWORD is missing"; exit 1; fi
-          if [ -z "${{ secrets.WEB_CLIENT_ID }}" ]; then echo "::error::WEB_CLIENT_ID is missing"; exit 1; fi
-          echo "All required secrets are present."
-
       - name: Validate tag format and extract version
         id: ver
         run: |
           TAG="${{ github.event.release.tag_name }}"
           TAG_LOWER=$(echo "$TAG" | tr '[:upper:]' '[:lower:]')
           VERSION="${TAG_LOWER#v}"
-          
           if ! echo "$VERSION" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
             echo "::error::Tag '$TAG' is not vMAJOR.MINOR.PATCH"
             exit 1
           fi
-          
           echo "tag=v$VERSION"       >> $GITHUB_OUTPUT
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
@@ -104,22 +93,24 @@ jobs:
           cd app
           gradle wrapper --gradle-version 8.7
 
-      - name: Restore Keystore & local.properties
+      - name: Restore keystore
         run: |
-          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > $GITHUB_WORKSPACE/release.keystore
-          chmod 600 $GITHUB_WORKSPACE/release.keystore
-          test -s $GITHUB_WORKSPACE/release.keystore || { echo "::error::keystore decoded to empty file"; exit 1; }
+          mkdir -p "$HOME/.android"
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/release.keystore"
+          chmod 600 "$HOME/.android/release.keystore"
+          test -s "$HOME/.android/release.keystore" || { echo "::error::keystore decoded to empty file"; exit 1; }
           
           echo "WEB_CLIENT_ID=${{ secrets.WEB_CLIENT_ID }}" > app/local.properties
           echo "sdk.dir=$ANDROID_HOME" >> app/local.properties
 
       - name: Build signed release APK
         env:
-          KEYSTORE_PATH: ${{ github.workspace }}/release.keystore
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
-          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
-          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS:         ${{ secrets.KEY_ALIAS }}
+          KEY_PASSWORD:      ${{ secrets.KEY_PASSWORD }}
         run: |
+          # This is the exact absolute path trick from your working reference repo
+          export KEYSTORE_PATH="$HOME/.android/release.keystore"
           cd app
           chmod +x gradlew
           ./gradlew :app:assembleRelease --no-daemon
