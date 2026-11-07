@@ -1,22 +1,31 @@
 package in.edu.jdsgcollege.bokakhat.ui.screens
 
 import android.app.Activity
+import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
@@ -25,7 +34,10 @@ import in.edu.jdsgcollege.bokakhat.data.remote.AuthRequest
 import in.edu.jdsgcollege.bokakhat.data.remote.RetrofitClient
 import in.edu.jdsgcollege.bokakhat.data.remote.User
 import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+import in.edu.jdsgcollege.bokakhat.utils.ImageUtils
 import kotlinx.coroutines.launch
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -49,6 +61,23 @@ fun AuthScreen(
     var phone by remember { mutableStateOf("") }
     var classSelection by remember { mutableStateOf("") }
     var deptSelection by remember { mutableStateOf("") }
+    
+    // Image State
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+    var compressedImageFile by remember { mutableStateOf<File?>(null) }
+
+    // Image Picker Launcher
+    val imagePickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        uri?.let {
+            selectedImageUri = it
+            compressedImageFile = ImageUtils.compressImageToWebp(context, it)
+            if (compressedImageFile == null) {
+                Toast.makeText(context, "Failed to compress image", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
 
     // Google Sign-In Launcher
     val launcher = rememberLauncherForActivityResult(
@@ -67,10 +96,8 @@ fun AuthScreen(
                             if (response.isSuccessful) {
                                 val body = response.body()
                                 if (body?.exists == true && body.token != null && body.user != null) {
-                                    // User exists, log them in immediately
                                     onAuthSuccess(body.token, body.user)
                                 } else {
-                                    // User doesn't exist, show signup form
                                     googleEmail = body?.email ?: ""
                                     googleName = body?.name ?: ""
                                     isGoogleAuthenticated = true
@@ -122,7 +149,6 @@ fun AuthScreen(
                 Spacer(Modifier.height(16.dp))
                 Text("Connecting...", color = BluePrimary)
             } else if (!isGoogleAuthenticated) {
-                // Initial Login / Signup Screen
                 Spacer(modifier = Modifier.height(64.dp))
                 Text(
                     text = if (isLogin) "Welcome Back" else "Create an Account",
@@ -133,7 +159,6 @@ fun AuthScreen(
                 
                 Button(
                     onClick = {
-                        // Use the injected Web Client ID from BuildConfig
                         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                             .requestIdToken(BuildConfig.WEB_CLIENT_ID)
                             .requestEmail()
@@ -148,7 +173,6 @@ fun AuthScreen(
                     Text("Continue with Google", fontWeight = FontWeight.Bold)
                 }
             } else {
-                // Signup Form
                 Text(
                     text = "Complete Your Profile",
                     style = MaterialTheme.typography.headlineLarge,
@@ -160,6 +184,33 @@ fun AuthScreen(
                     color = Color.Gray
                 )
                 Spacer(modifier = Modifier.height(24.dp))
+
+                // Profile Picture Picker UI
+                Box(
+                    modifier = Modifier
+                        .size(100.dp)
+                        .clip(CircleShape)
+                        .background(Color.LightGray)
+                        .clickable { imagePickerLauncher.launch("image/*") },
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (selectedImageUri != null) {
+                        AsyncImage(
+                            model = selectedImageUri,
+                            contentDescription = "Profile Picture",
+                            contentScale = ContentScale.Crop,
+                            modifier = Modifier.fillMaxSize()
+                        )
+                    } else {
+                        Icon(
+                            imageVector = Icons.Default.AddAPhoto,
+                            contentDescription = "Add Photo",
+                            tint = Color.White
+                        )
+                    }
+                }
+                Text("Tap to add photo*", style = MaterialTheme.typography.labelMedium, color = TealAccent)
+                Spacer(modifier = Modifier.height(16.dp))
 
                 // Role Selection
                 Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceEvenly) {
@@ -226,14 +277,19 @@ fun AuthScreen(
                             Toast.makeText(context, "Phone must be 10 digits", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
-                        // TODO: Call the backend /api/users endpoint with the form data
+                        if (compressedImageFile == null) {
+                            Toast.makeText(context, "Profile picture is required", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
+                        
                         isLoading = true
                         scope.launch {
                             kotlinx.coroutines.delay(1000)
                             isLoading = false
+                            // TODO: Connect to the actual backend multipart upload endpoint
                             val mockUser = User(
                                 id = "1", email = googleEmail, full_name = googleName,
-                                role = selectedRole, phone = phone, profile_pic_url = ""
+                                role = selectedRole, phone = phone, profile_pic_url = "https://placeholder.com/img.webp"
                             )
                             onAuthSuccess("mock_jwt_token", mockUser)
                         }
