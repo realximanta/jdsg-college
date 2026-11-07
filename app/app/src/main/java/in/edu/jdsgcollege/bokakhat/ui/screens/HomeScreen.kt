@@ -1,0 +1,93 @@
+package in.edu.jdsgcollege.bokakhat.ui.screens
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.LocationOn
+import androidx.compose.material.icons.filled.Schedule
+import androidx.compose.material3.*
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
+import in.edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
+import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
+
+@Composable
+fun HomeScreen() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Text(
+            text = "Welcome,",
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        Text(
+            text = "Student Name", // Placeholder for dynamic name
+            style = MaterialTheme.typography.headlineLarge,
+            color = BluePrimary
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Placeholder Card 1: Routine
+        ActionCard(
+            title = "Class Routine",
+            subtitle = "Check your daily schedule",
+            icon = Icons.Default.Schedule,
+            onClick = { /* TODO */ }
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        // Placeholder Card 2: Room Locator
+        ActionCard(
+            title = "Find a Room",
+            subtitle = "Locate classrooms instantly",
+            icon = Icons.Default.LocationOn,
+            onClick = { /* TODO */ }
+        )
+    }
+}
+
+@Composable
+fun ActionCard(title: String, subtitle: String, icon: ImageVector, onClick: () -> Unit) {
+    Card(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(16.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(20.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = title,
+                tint = TealAccent,
+                modifier = Modifier.size(32.dp)
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Column {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                )
+            }
+        }
+    }
+}
