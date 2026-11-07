@@ -1,7 +1,5 @@
 package in.edu.jdsgcollege.bokakhat.ui.screens
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
@@ -27,7 +25,10 @@ sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: 
 }
 
 @Composable
-fun DashboardScreen(authViewModel: AuthViewModel) {
+fun DashboardScreen(
+    authViewModel: AuthViewModel,
+    onNavigateToUpdateProfile: () -> Unit
+) {
     val navController = rememberNavController()
     val items = listOf(
         BottomNavItem.Home,
@@ -75,7 +76,10 @@ fun DashboardScreen(authViewModel: AuthViewModel) {
                 NotificationsScreen() 
             }
             composable(BottomNavItem.Account.route) { 
-                AccountScreen(authViewModel = authViewModel) 
+                AccountScreen(
+                    authViewModel = authViewModel,
+                    onNavigateToUpdateProfile = onNavigateToUpdateProfile
+                ) 
             }
         }
     }
