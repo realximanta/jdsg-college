@@ -53,7 +53,8 @@ func main() {
 	// Notification Routes
 	mux.HandleFunc("GET /api/notifications", notifHandler.GetNotifications)
 
-	// Serve Static Files (Web Portal / OAuth Branding)
+	// Serve Static Files (Web Portal)
+	// This must be placed at the end so /api routes take precedence.
 	fs := http.FileServer(http.Dir("./public"))
 	mux.Handle("/", fs)
 
