@@ -94,11 +94,13 @@ jobs:
 
       - name: Restore Keystore & local.properties
         run: |
+          # 1. Restore Keystore
           mkdir -p "$HOME/.android"
           echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > "$HOME/.android/release.keystore"
           chmod 600 "$HOME/.android/release.keystore"
           test -s "$HOME/.android/release.keystore" || { echo "::error::keystore decoded to empty file"; exit 1; }
           
+          # 2. Create local.properties for the build
           echo "WEB_CLIENT_ID=${{ secrets.WEB_CLIENT_ID }}" > app/local.properties
           echo "sdk.dir=$ANDROID_HOME" >> app/local.properties
 
