@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.AddAPhoto
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -59,7 +60,7 @@ fun AuthScreen(
     var isGoogleAuthenticated by remember { mutableStateOf(false) }
     var googleEmail by remember { mutableStateOf("") }
     var googleName by remember { mutableStateOf("") }
-    var tempToken by remember { mutableStateOf("") } // JWT from backend for signup
+    var tempToken by remember { mutableStateOf("") }
     
     // Form State
     var selectedRole by remember { mutableStateOf("student") }
@@ -79,6 +80,9 @@ fun AuthScreen(
         uri?.let {
             selectedImageUri = it
             compressedImageFile = ImageUtils.compressImageToWebp(context, it)
+            if (compressedImageFile == null) {
+                Toast.makeText(context, "Failed to compress image", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
@@ -102,7 +106,7 @@ fun AuthScreen(
                                 } else {
                                     googleEmail = body?.email ?: ""
                                     googleName = body?.name ?: ""
-                                    tempToken = body?.token ?: "" // Capture the signup token
+                                    tempToken = body?.token ?: ""
                                     isGoogleAuthenticated = true
                                 }
                             } else {
@@ -129,7 +133,7 @@ fun AuthScreen(
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
-                            imageVector = androidx.compose.material.icons.Icons.AutoMirrored.Filled.ArrowBack,
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
                             tint = BluePrimary
                         )
@@ -275,7 +279,7 @@ fun AuthScreen(
                 
                 Button(
                     onClick = {
-                        if (phone.length != 10 || fullNameIsInvalid(googleName) || compressedImageFile == null) {
+                        if (phone.length != 10 || googleName.trim().isEmpty() || compressedImageFile == null) {
                             Toast.makeText(context, "Please fill all required fields & add a photo", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
@@ -283,7 +287,6 @@ fun AuthScreen(
                         isLoading = true
                         scope.launch {
                             try {
-                                // 1. Create User Record in KV
                                 val newUser = User(
                                     id = "", email = googleEmail, full_name = googleName,
                                     role = selectedRole, phone = phone, profile_pic_url = "",
@@ -299,7 +302,6 @@ fun AuthScreen(
                                     return@launch
                                 }
 
-                                // 2. Upload Avatar to R2
                                 val filePart = MultipartBody.Part.createFormData(
                                     "avatar", 
                                     compressedImageFile!!.name, 
@@ -308,7 +310,6 @@ fun AuthScreen(
                                 val avatarResponse = RetrofitClient.apiService.uploadAvatar("Bearer $tempToken", filePart)
                                 
                                 if (avatarResponse.isSuccessful && avatarResponse.body() != null) {
-                                    // 3. Complete Login Session
                                     onAuthSuccess(tempToken, avatarResponse.body()!!)
                                 } else {
                                     Toast.makeText(context, "Failed to upload avatar", Toast.LENGTH_SHORT).show()
@@ -329,8 +330,4 @@ fun AuthScreen(
             }
         }
     }
-}
-
-private fun fullNameIsInvalid(name: String): Boolean {
-    return name.trim().isEmpty()
 }
