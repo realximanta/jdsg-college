@@ -8,14 +8,18 @@ import in.edu.jdsgcollege.bokakhat.ui.screens.AboutScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.AuthScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.DashboardScreen
 import in.edu.jdsgcollege.bokakhat.ui.screens.LandingScreen
+import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
-fun AppNavigation() {
+fun AppNavigation(
+    authViewModel: AuthViewModel,
+    startDestination: String
+) {
     val navController = rememberNavController()
 
     NavHost(
         navController = navController,
-        startDestination = "landing"
+        startDestination = startDestination
     ) {
         composable("landing") {
             LandingScreen(
@@ -26,20 +30,20 @@ fun AppNavigation() {
         }
         
         composable("about") {
-            AboutScreen(
-                onBackClick = { navController.popBackStack() }
-            )
+            AboutScreen(onBackClick = { navController.popBackStack() })
         }
         
         composable("login") {
             AuthScreen(
                 isLogin = true,
                 onBackClick = { navController.popBackStack() },
-                onAuthSuccess = { 
+                onAuthSuccess = { token, user -> 
+                    authViewModel.updateSession(token, user)
                     navController.navigate("dashboard") { 
                         popUpTo("landing") { inclusive = true } 
                     } 
-                }
+                },
+                authViewModel = authViewModel
             )
         }
         
@@ -47,16 +51,18 @@ fun AppNavigation() {
             AuthScreen(
                 isLogin = false,
                 onBackClick = { navController.popBackStack() },
-                onAuthSuccess = { 
+                onAuthSuccess = { token, user -> 
+                    authViewModel.updateSession(token, user)
                     navController.navigate("dashboard") { 
                         popUpTo("landing") { inclusive = true } 
                     } 
-                }
+                },
+                authViewModel = authViewModel
             )
         }
         
         composable("dashboard") {
-            DashboardScreen() // Handles internal bottom nav
+            DashboardScreen(authViewModel = authViewModel) 
         }
     }
 }
