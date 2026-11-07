@@ -23,7 +23,10 @@ import in.edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 import in.edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 @Composable
-fun AccountScreen(authViewModel: AuthViewModel) {
+fun AccountScreen(
+    authViewModel: AuthViewModel,
+    onNavigateToUpdateProfile: () -> Unit
+) {
     val currentUser by authViewModel.currentUser.collectAsState()
 
     Column(
@@ -95,11 +98,11 @@ fun AccountScreen(authViewModel: AuthViewModel) {
         }
         ProfileDetailRow(label = "Phone", value = currentUser?.phone ?: "N/A")
 
-        Spacer(modifier = Modifier.height(32.dp))
+        Spacer(modifier = Modifier.weight(1f))
 
         // Update Profile Button
         Button(
-            onClick = { /* TODO: Navigate to Edit Profile */ },
+            onClick = onNavigateToUpdateProfile,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(50.dp),
