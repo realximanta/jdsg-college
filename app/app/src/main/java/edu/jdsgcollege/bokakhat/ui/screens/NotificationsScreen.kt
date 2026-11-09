@@ -19,7 +19,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import edu.jdsgcollege.bokakhat.data.remote.Notification
-import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 import edu.jdsgcollege.bokakhat.ui.viewmodels.NotificationViewModel
 
@@ -37,20 +36,25 @@ fun NotificationsScreen(viewModel: NotificationViewModel = viewModel()) {
         Text(
             text = "Notifications",
             style = MaterialTheme.typography.headlineLarge,
-            color = BluePrimary,
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(bottom = 16.dp)
         )
 
         when {
             isLoading -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator(color = BluePrimary)
+                    CircularProgressIndicator(color = MaterialTheme.colorScheme.primary)
                 }
             }
             error != null -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = error ?: "Unknown error", color = MaterialTheme.colorScheme.error, textAlign = TextAlign.Center)
+                        Text(
+                            text = error ?: "Unknown error", 
+                            color = MaterialTheme.colorScheme.error, 
+                            textAlign = TextAlign.Center
+                        )
                         Spacer(modifier = Modifier.height(16.dp))
                         Button(onClick = { viewModel.fetchNotifications() }) {
                             Text("Retry")
@@ -60,7 +64,10 @@ fun NotificationsScreen(viewModel: NotificationViewModel = viewModel()) {
             }
             notifications.isEmpty() -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    Text(text = "No new notifications", color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f))
+                    Text(
+                        text = "No new notifications", 
+                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
                 }
             }
             else -> {
@@ -89,7 +96,7 @@ fun NotificationCard(notification: Notification) {
                 context.startActivity(intent)
             },
         shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant),
         elevation = CardDefaults.cardElevation(defaultElevation = 1.dp)
     ) {
         Column(
@@ -108,20 +115,20 @@ fun NotificationCard(notification: Notification) {
                 Text(
                     text = notification.date,
                     style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.5f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = notification.title,
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface
+                color = MaterialTheme.colorScheme.onSurfaceVariant
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
                 text = "Read More →",
                 style = MaterialTheme.typography.bodyLarge,
-                color = BluePrimary,
+                color = MaterialTheme.colorScheme.primary,
                 fontWeight = FontWeight.SemiBold
             )
         }
