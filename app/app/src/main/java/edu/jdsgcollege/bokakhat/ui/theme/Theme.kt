@@ -18,18 +18,23 @@ private val LightColors = lightColorScheme(
     surface = SurfaceLight,
     onPrimary = SurfaceLight,
     onBackground = TextPrimary,
-    onSurface = TextPrimary
+    onSurface = TextPrimary,
+    surfaceVariant = Color(0xFFF1F5F9),
+    onSurfaceVariant = Color(0xFF475569)
 )
 
 private val DarkColors = darkColorScheme(
     primary = TealLight,
     secondary = TealAccent,
     tertiary = BlueSecondary,
-    background = BackgroundDark,
-    surface = SurfaceDark,
-    onPrimary = BackgroundDark,
-    onBackground = SurfaceLight,
-    onSurface = SurfaceLight
+    // Deep Slate background instead of pitch black
+    background = Color(0xFF0F172A),
+    surface = Color(0xFF1E293B),
+    onPrimary = Color(0xFF0F172A),
+    onBackground = Color(0xFFF8FAFC),
+    onSurface = Color(0xFFF8FAFC),
+    surfaceVariant = Color(0xFF334155),
+    onSurfaceVariant = Color(0xFFCBD5E1)
 )
 
 @Composable
