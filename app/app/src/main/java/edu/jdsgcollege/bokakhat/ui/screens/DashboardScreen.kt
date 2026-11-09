@@ -15,7 +15,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
 sealed class BottomNavItem(val route: String, val icon: ImageVector, val label: String) {
@@ -55,9 +54,11 @@ fun DashboardScreen(
                             }
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = BluePrimary,
-                            selectedTextColor = BluePrimary,
-                            indicatorColor = BluePrimary.copy(alpha = 0.1f)
+                            selectedIconColor = MaterialTheme.colorScheme.primary,
+                            selectedTextColor = MaterialTheme.colorScheme.primary,
+                            indicatorColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.1f),
+                            unselectedIconColor = MaterialTheme.colorScheme.onSurfaceVariant,
+                            unselectedTextColor = MaterialTheme.colorScheme.onSurfaceVariant
                         )
                     )
                 }
