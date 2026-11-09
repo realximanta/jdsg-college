@@ -9,6 +9,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -23,6 +25,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -64,6 +67,12 @@ fun UpdateProfileScreen(
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var compressedImageFile by remember { mutableStateOf<File?>(null) }
 
+    val classOptions = listOf(
+        "HS 1st Year Arts", "HS 1st Year Commerce",
+        "HS 2nd Year Arts", "HS 2nd Year Commerce",
+        "B.A.", "B.COM."
+    )
+
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
     ) { uri: Uri? ->
@@ -76,13 +85,13 @@ fun UpdateProfileScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Update Profile", color = BluePrimary) },
+                title = { Text("Update Profile", color = MaterialTheme.colorScheme.primary) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(
                             imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = "Back",
-                            tint = BluePrimary
+                            tint = MaterialTheme.colorScheme.primary
                         )
                     }
                 },
@@ -103,7 +112,7 @@ fun UpdateProfileScreen(
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape)
-                    .background(Color.LightGray)
+                    .background(MaterialTheme.colorScheme.surfaceVariant)
                     .clickable { imagePickerLauncher.launch("image/*") },
                 contentAlignment = Alignment.Center
             ) {
@@ -122,7 +131,7 @@ fun UpdateProfileScreen(
                         modifier = Modifier.fillMaxSize()
                     )
                 } else {
-                    Icon(Icons.Default.AddAPhoto, contentDescription = "Add Photo", tint = Color.White)
+                    Icon(Icons.Default.AddAPhoto, contentDescription = "Add Photo", tint = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
                 
                 // Overlay to show it's clickable
@@ -173,20 +182,53 @@ fun UpdateProfileScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             if (selectedRole == "student") {
-                OutlinedTextField(
-                    value = classSelection,
-                    onValueChange = { classSelection = it },
-                    label = { Text("Class*") },
-                    modifier = Modifier.fillMaxWidth(),
-                    isError = classSelection.isEmpty()
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                OutlinedTextField(
-                    value = semester,
-                    onValueChange = { semester = it },
-                    label = { Text("Semester*") },
+                // Class Selection (Radio Buttons)
+                Text(
+                    text = "Class*",
+                    style = MaterialTheme.typography.titleMedium,
+                    color = MaterialTheme.colorScheme.onSurface,
                     modifier = Modifier.fillMaxWidth()
                 )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .selectableGroup()
+                ) {
+                    classOptions.forEach { option ->
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .selectable(
+                                    selected = (classSelection == option),
+                                    onClick = { classSelection = option },
+                                    role = Role.RadioButton
+                                )
+                                .padding(vertical = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            RadioButton(
+                                selected = (classSelection == option),
+                                onClick = null
+                            )
+                            Text(
+                                text = option,
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(start = 8.dp)
+                            )
+                        }
+                    }
+                }
+
+                // Semester (Only for B.A. / B.COM.)
+                if (classSelection == "B.A." || classSelection == "B.COM.") {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = semester,
+                        onValueChange = { semester = it },
+                        label = { Text("Semester (I-VIII)*") },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
             } else {
                 OutlinedTextField(
                     value = deptSelection,
@@ -211,6 +253,10 @@ fun UpdateProfileScreen(
                 onClick = {
                     if (fullName.isEmpty() || phone.length != 10) {
                         Toast.makeText(context, "Please fill all required fields correctly", Toast.LENGTH_SHORT).show()
+                        return@Button
+                    }
+                    if (selectedRole == "student" && classSelection.isEmpty()) {
+                        Toast.makeText(context, "Please select a class", Toast.LENGTH_SHORT).show()
                         return@Button
                     }
                     
@@ -249,7 +295,7 @@ fun UpdateProfileScreen(
                                 full_name = fullName,
                                 role = selectedRole,
                                 class_name = if (selectedRole == "student") classSelection else null,
-                                semester = if (selectedRole == "student") semester else null,
+                                semester = if (selectedRole == "student" && (classSelection == "B.A." || classSelection == "B.COM.")) semester else null,
                                 roll_no = finalUser?.roll_no,
                                 emergency_contact = finalUser?.emergency_contact,
                                 department = if (selectedRole == "teacher") deptSelection else null,
@@ -279,7 +325,7 @@ fun UpdateProfileScreen(
                     .fillMaxWidth()
                     .height(50.dp),
                 shape = RoundedCornerShape(8.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = BluePrimary),
+                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary),
                 enabled = !isLoading
             ) {
                 if (isLoading) {
