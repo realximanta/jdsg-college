@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
+import android.os.Build
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -35,9 +36,16 @@ object ImageUtils {
                 originalBitmap
             }
 
-            // Compress to WebP
+            // Compress to WebP (Use WEBP_LOSSY for API 30+ to avoid deprecation)
+            val format = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                Bitmap.CompressFormat.WEBP_LOSSY
+            } else {
+                @Suppress("DEPRECATION")
+                Bitmap.CompressFormat.WEBP
+            }
+
             val outputStream = ByteArrayOutputStream()
-            scaledBitmap.compress(Bitmap.CompressFormat.WEBP, 80, outputStream)
+            scaledBitmap.compress(format, 80, outputStream)
             val byteArray = outputStream.toByteArray()
 
             // Save to cache file
