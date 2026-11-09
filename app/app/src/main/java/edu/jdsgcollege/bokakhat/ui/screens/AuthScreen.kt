@@ -10,6 +10,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -24,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -73,6 +76,12 @@ fun AuthScreen(
     // Image State
     var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
     var compressedImageFile by remember { mutableStateOf<File?>(null) }
+
+    val classOptions = listOf(
+        "HS 1st Year Arts", "HS 1st Year Commerce",
+        "HS 2nd Year Arts", "HS 2nd Year Commerce",
+        "B.A.", "B.COM."
+    )
 
     val imagePickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.GetContent()
@@ -243,22 +252,56 @@ fun AuthScreen(
                     isError = phone.isNotEmpty() && phone.length < 10
                 )
                 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(16.dp))
 
                 if (selectedRole == "student") {
-                    OutlinedTextField(
-                        value = classSelection, 
-                        onValueChange = { classSelection = it }, 
-                        label = { Text("Class (e.g., B.A., HS 1st Year)*") }, 
+                    // Class Selection (Radio Buttons)
+                    Text(
+                        text = "Class*",
+                        style = MaterialTheme.typography.titleMedium,
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.fillMaxWidth()
                     )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    OutlinedTextField(
-                        value = semester, 
-                        onValueChange = { semester = it }, 
-                        label = { Text("Semester (If B.A./B.Com)*") }, 
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .selectableGroup()
+                    ) {
+                        classOptions.forEach { option ->
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .selectable(
+                                        selected = (classSelection == option),
+                                        onClick = { classSelection = option },
+                                        role = Role.RadioButton
+                                    )
+                                    .padding(vertical = 4.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                RadioButton(
+                                    selected = (classSelection == option),
+                                    onClick = null
+                                )
+                                Text(
+                                    text = option,
+                                    style = MaterialTheme.typography.bodyLarge,
+                                    modifier = Modifier.padding(start = 8.dp)
+                                )
+                            }
+                        }
+                    }
+
+                    // Semester (Only for B.A. / B.COM.)
+                    if (classSelection == "B.A." || classSelection == "B.COM.") {
+                        Spacer(modifier = Modifier.height(8.dp))
+                        OutlinedTextField(
+                            value = semester, 
+                            onValueChange = { semester = it }, 
+                            label = { Text("Semester (I-VIII)*") }, 
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    }
                 } else {
                     OutlinedTextField(
                         value = deptSelection, 
@@ -283,6 +326,10 @@ fun AuthScreen(
                             Toast.makeText(context, "Please fill all required fields & add a photo", Toast.LENGTH_SHORT).show()
                             return@Button
                         }
+                        if (selectedRole == "student" && classSelection.isEmpty()) {
+                            Toast.makeText(context, "Please select a class", Toast.LENGTH_SHORT).show()
+                            return@Button
+                        }
                         
                         isLoading = true
                         scope.launch {
@@ -291,7 +338,7 @@ fun AuthScreen(
                                     id = "", email = googleEmail, full_name = googleName,
                                     role = selectedRole, phone = phone, profile_pic_url = "",
                                     class_name = if (selectedRole == "student") classSelection else null,
-                                    semester = if (selectedRole == "student") semester else null,
+                                    semester = if (selectedRole == "student" && (classSelection == "B.A." || classSelection == "B.COM.")) semester else null,
                                     department = if (selectedRole == "teacher") deptSelection else null,
                                     designation = if (selectedRole == "teacher") designation else null
                                 )
