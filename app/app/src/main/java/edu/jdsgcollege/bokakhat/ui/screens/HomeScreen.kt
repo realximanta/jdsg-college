@@ -12,8 +12,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 import edu.jdsgcollege.bokakhat.ui.viewmodels.AuthViewModel
 
@@ -29,12 +29,13 @@ fun HomeScreen(authViewModel: AuthViewModel) {
         Text(
             text = "Welcome,",
             style = MaterialTheme.typography.titleLarge,
-            color = MaterialTheme.colorScheme.onBackground
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
         )
         Text(
             text = currentUser?.full_name ?: "Student",
             style = MaterialTheme.typography.headlineLarge,
-            color = BluePrimary
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
         )
         
         Spacer(modifier = Modifier.height(32.dp))
@@ -65,7 +66,9 @@ fun ActionCard(title: String, subtitle: String, icon: ImageVector, onClick: () -
         onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surfaceVariant
+        ),
         elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
     ) {
         Row(
@@ -85,12 +88,12 @@ fun ActionCard(title: String, subtitle: String, icon: ImageVector, onClick: () -
                 Text(
                     text = title,
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface
+                    color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Text(
                     text = subtitle,
                     style = MaterialTheme.typography.bodyLarge,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                    color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.7f)
                 )
             }
         }
