@@ -18,13 +18,13 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import edu.jdsgcollege.bokakhat.R
-import edu.jdsgcollege.bokakhat.ui.theme.BluePrimary
 import edu.jdsgcollege.bokakhat.ui.theme.TealAccent
 
-@OptIn(ExperimentalFoundationApi::class) // <--- ADDED THIS
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun LandingScreen(
     onMenuClick: () -> Unit,
@@ -57,15 +57,15 @@ fun LandingScreen(
                 Icon(
                     imageVector = Icons.Default.Menu,
                     contentDescription = "Menu",
-                    tint = BluePrimary
+                    tint = MaterialTheme.colorScheme.primary
                 )
             }
             Row {
                 TextButton(onClick = onSignUpClick) {
-                    Text("Sign Up", color = BluePrimary)
+                    Text("Sign Up", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 }
                 TextButton(onClick = onLoginClick) {
-                    Text("Login", color = BluePrimary)
+                    Text("Login", color = MaterialTheme.colorScheme.primary, fontWeight = FontWeight.Bold)
                 }
             }
         }
@@ -77,7 +77,11 @@ fun LandingScreen(
             horizontalArrangement = Arrangement.Center
         ) {
             repeat(3) { iteration ->
-                val color = if (pagerState.currentPage == iteration) TealAccent else Color.LightGray
+                val color = if (pagerState.currentPage == iteration) 
+                    TealAccent 
+                else 
+                    MaterialTheme.colorScheme.surfaceVariant
+                
                 Box(
                     modifier = Modifier
                         .padding(4.dp)
@@ -113,12 +117,14 @@ fun SlideOneCollegeFront() {
         Text(
             text = "JDSG College",
             style = MaterialTheme.typography.headlineLarge,
-            color = BluePrimary
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
         )
         Text(
             text = "Learn • Grow • Achieve",
             style = MaterialTheme.typography.titleLarge,
-            color = TealAccent
+            color = TealAccent,
+            fontWeight = FontWeight.Medium
         )
     }
 }
@@ -145,12 +151,14 @@ fun SlideTwoPrincipal() {
         Text(
             text = "Principal's Message",
             style = MaterialTheme.typography.headlineLarge,
-            color = BluePrimary
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "\"Education is the most powerful weapon which you can use to change the world. We strive to provide an environment of social justice and peace.\"",
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Center
         )
     }
@@ -168,12 +176,14 @@ fun SlideThreeCollegeDetails() {
         Text(
             text = "About the College",
             style = MaterialTheme.typography.headlineLarge,
-            color = BluePrimary
+            color = MaterialTheme.colorScheme.primary,
+            fontWeight = FontWeight.Bold
         )
         Spacer(modifier = Modifier.height(16.dp))
         Text(
             text = "Jogananda Deva Satradhikar Goswami (JDSG) College, established in 1964, is a premier educational institution located in Bokakhat, Golaghat, Assam. Affiliated with Dibrugarh University and recognized under the UGC Act, the college is dedicated to its vision of 'Education for Social Justice and Peace.'",
             style = MaterialTheme.typography.bodyLarge,
+            color = MaterialTheme.colorScheme.onBackground,
             textAlign = TextAlign.Justify
         )
     }
