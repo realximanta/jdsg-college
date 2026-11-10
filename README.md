@@ -10,6 +10,8 @@
 - 🛠️ **Vibe Coding:** This project is also a personal challenge to test rapid, AI-assisted "vibe coding" capabilities, building a production-ready full-stack app from scratch.
 - 🎯 **The Goal:** To provide a seamless digital experience for students and teachers to access notifications, update profiles, and eventually locate rooms and check routines.
 
+incoming updates...
+
 ## 📂 Repository Navigation
 This is a monorepo containing both the Android application and the polyglot backend. Click the badges below to dive into the respective documentation.
 
