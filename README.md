@@ -11,7 +11,7 @@
     <img src="https://img.shields.io/github/actions/workflow/status/realximanta/jdsg-college/release.yml?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
   </a>
   <a href="https://api.jdsgcollege.dpdns.org/live">
-    <img src="https://img.shields.io/uptimerobot/status/m797808888-8c3d7b9f3e4f5a6b7c8d9e0f?style=for-the-badge&label=API%20Status" alt="UptimeRobot Status" />
+    <img src="https://img.shields.io/website?url=https%3A%2F%2Fapi.jdsgcollege.dpdns.org%2Flive&up_message=online&down_message=offline&style=for-the-badge&label=API%20Status" alt="API Status" />
   </a>
 
   <br />
@@ -86,22 +86,22 @@ graph TD
     User((User))
     
     subgraph Clients
-        Android[📱 Android App\n(Kotlin/Compose)]
-        Web[🌐 Web Portal\n(HTML/Tailwind)]
+        Android["📱 Android App<br/>(Kotlin/Compose)"]
+        Web["🌐 Web Portal<br/>(HTML/Tailwind)"]
     end
     
-    subgraph Render [☁️ Render Free Tier (Docker)]
-        Go[🐹 Go API Gateway]
-        Py[🐍 Python Scraper]
+    subgraph Render [☁️ Render Free Tier - Docker]
+        Go["🐹 Go API Gateway"]
+        Py["🐍 Python Scraper"]
     end
     
     subgraph Cloudflare
-        KV[(🗄️ Workers KV\nUser Data)]
-        R2[(🖼️ R2 Bucket\nProfile Images)]
+        KV[("🗄️ Workers KV<br/>User Data")]
+        R2[("🖼️ R2 Bucket<br/>Profile Images")]
     end
     
-    CollegeSite[🏫 College Website]
-    Google[🔐 Google OAuth]
+    CollegeSite["🏫 College Website"]
+    Google["🔐 Google OAuth"]
     
     User --> Android
     User --> Web
