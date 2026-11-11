@@ -1,116 +1,211 @@
-<h1 align="center">
-  <a href="https://git.io/typing-svg">
-    <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=32&pause=1000&color=1E3A8A&center=true&vCenter=true&width=600&lines=JDSG+College+Portal;Android+App+%2B+Web+App;Learn+%E2%80%A2+Grow+%E2%80%A2+Achieve" alt="Typing SVG" />
+<div align="center">
+
+  <h1>🎓 JDSG College Portal</h1>
+  <p><b>The official digital ecosystem for Jogananda Deva Satradhikar Goswami (JDSG) College.</b></p>
+  <p><i>Learn • Grow • Achieve</i></p>
+
+  <a href="https://github.com/realximanta/jdsg-college/releases/latest">
+    <img src="https://img.shields.io/github/v/release/realximanta/jdsg-college?style=for-the-badge&color=1E3A8A" alt="Latest Release" />
   </a>
-</h1>
+  <a href="https://github.com/realximanta/jdsg-college/actions">
+    <img src="https://img.shields.io/github/actions/workflow/status/realximanta/jdsg-college/release.yml?style=for-the-badge&logo=githubactions&logoColor=white" alt="Build Status" />
+  </a>
+  <a href="https://api.jdsgcollege.dpdns.org/live">
+    <img src="https://img.shields.io/uptimerobot/status/m797808888-8c3d7b9f3e4f5a6b7c8d9e0f?style=for-the-badge&label=API%20Status" alt="UptimeRobot Status" />
+  </a>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Kotlin-2.0.0-7F52FF?style=for-the-badge&logo=kotlin&logoColor=white" alt="Kotlin" />
-  <img src="https://img.shields.io/badge/Jetpack_Compose-2024.06-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose" />
-  <img src="https://img.shields.io/badge/Go-1.26+-00ADD8?style=for-the-badge&logo=go&logoColor=white" alt="Go" />
-  <img src="https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white" alt="Python" />
-  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white" alt="Docker" />
-  <img src="https://img.shields.io/badge/Cloudflare-R2_&_KV-F38020?style=for-the-badge&logo=cloudflare&logoColor=white" alt="Cloudflare" />
-</p>
+  <br />
 
----
+  <img src="https://jdsgcollege.edu.in/wp-content/uploads/2025/01/1-2.jpg" alt="JDSG College Campus" width="100%" style="border-radius: 12px; max-width: 800px;" />
 
-## 🏛️ About the Project
-The official digital portal for **Jogananda Deva Satradhikar Goswami (JDSG) College**, Bokakhat. This monorepo contains both the **Android Application** and the **Polyglot Backend** (which also serves a responsive Web Portal). 
-
-The project aims to provide students and faculty with a seamless, secure, and modern interface to interact with the institution, check notifications, and manage profiles.
+</div>
 
 ---
 
-## ✨ Features
-- 🔐 **Google Authentication:** Secure login/signup via native Google Play Services (Android) and Google Identity Services (Web).
-- 📰 **Campus Notifications:** Automated Python scraper fetches the latest news from the college website.
-- 👤 **Profile Management:** Instagram-style profile view and update flow with image compression.
-- 🎨 **Premium UI/UX:** Material 3 dynamic theming with a custom "Deep Slate" dark mode and Serif typography.
-- 🌐 **Web Portal:** Fully responsive web version served directly by the Go backend.
-- 🐳 **Polyglot Backend:** Single Docker container running Go (API), Python (Scraper), Node.js (Future Chat), and PHP (Future Portal).
+## 📖 Table of Contents
+- [Overview](#-overview)
+- [✨ Key Features](#-key-features)
+- [🏗️ System Architecture](#️-system-architecture)
+- [💻 Tech Stack](#-tech-stack)
+- [🚀 Getting Started](#-getting-started)
+- [🔌 API Reference](#-api-reference)
+- [🤝 Contributing](#-contributing)
 
 ---
 
-## 🛠️ Tech Stack
-- **Android App:** Kotlin, Jetpack Compose (Material 3), Retrofit, Coil, EncryptedSharedPreferences.
-- **Backend:** Go (net/http), Python (BeautifulSoup).
-- **Database & Storage:** Cloudflare Workers KV (Metadata), Cloudflare R2 (Profile Images).
-- **Frontend (Web):** HTML5, Tailwind CSS (CDN), AOS (Animate on Scroll).
-- **CI/CD:** GitHub Actions.
-- **Hosting:** Render (Backend & Web), Cloudflare (Storage & DNS).
+## 🌟 Overview
+This repository is a **Monorepo** housing the complete digital infrastructure for JDSG College. It replaces the need for manual noticeboard checking by providing real-time push updates, student/teacher profiles, and a seamless authentication flow.
+
+Built for speed and scale, the architecture utilizes a **Polyglot Docker Container** deployed on Render's free tier, ensuring high availability at zero cost.
 
 ---
 
-## 📂 Repository Structure
-```text
-jdsg-college/
-│
-├── app/                  # Android Application (Kotlin + Compose)
-│   ├── src/main/java/edu/jdsgcollege/bokakhat/
-│   │   ├── data/         # Retrofit, Encrypted SharedPreferences
-│   │   ├── ui/           # Screens, Theme, ViewModels
-│   │   ├── navigation/   # App NavHost
-│   │   └── utils/        # Image Compression
-│   └── build.gradle.kts  # App-level Gradle config
-│
-├── backend/              # Polyglot Backend (Go + Python + Docker)
-│   ├── internal/         # Go Handlers, Models, Auth, Storage
-│   ├── scripts/          # Python Scraper (scraper.py)
-│   ├── public/           # Web Portal (HTML/CSS/JS)
-│   ├── Dockerfile        # Multi-stage polyglot container
-│   └── main.go           # Server entry point
-│
-├── HISTORY/              # Architectural documentation (STEP0, STEP1, etc.)
-│
-└── .github/workflows/    # CI/CD pipelines (release.yml, generate-keystore.yml)
+## ✨ Key Features
+
+<table>
+  <tr>
+    <td width="33%" valign="top">
+      <h3>📱 Android App</h3>
+      <ul>
+        <li>Native Jetpack Compose UI.</li>
+        <li>Google Play Services Auth.</li>
+        <li>Encrypted SharedPreferences.</li>
+        <li>Dynamic Material 3 Dark Mode.</li>
+        <li>Client-side WebP image compression.</li>
+      </ul>
+    </td>
+    <td width="33%" valign="top">
+      <h3>🌐 Web Portal</h3>
+      <ul>
+        <li>Zero-dependency Tailwind CSS.</li>
+        <li>Google Identity Services.</li>
+        <li>AOS (Animate On Scroll) micro-interactions.</li>
+        <li>Responsive dashboard layout.</li>
+        <li>Served directly via the Go Backend.</li>
+      </ul>
+    </td>
+    <td width="33%" valign="top">
+      <h3>⚙️ Backend</h3>
+      <ul>
+        <li>Go (net/http) API Gateway.</li>
+        <li>Python (BeautifulSoup) auto-scraper.</li>
+        <li>Cloudflare Workers KV (NoSQL).</li>
+        <li>Cloudflare R2 Object Storage.</li>
+        <li>JWT Session Management.</li>
+      </ul>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🏗️ System Architecture
+
+```mermaid
+graph TD
+    User((User))
+    
+    subgraph Clients
+        Android[📱 Android App\n(Kotlin/Compose)]
+        Web[🌐 Web Portal\n(HTML/Tailwind)]
+    end
+    
+    subgraph Render [☁️ Render Free Tier (Docker)]
+        Go[🐹 Go API Gateway]
+        Py[🐍 Python Scraper]
+    end
+    
+    subgraph Cloudflare
+        KV[(🗄️ Workers KV\nUser Data)]
+        R2[(🖼️ R2 Bucket\nProfile Images)]
+    end
+    
+    CollegeSite[🏫 College Website]
+    Google[🔐 Google OAuth]
+    
+    User --> Android
+    User --> Web
+    
+    Android --> Go
+    Web --> Go
+    
+    Go --> Google
+    Go --> KV
+    Go --> R2
+    
+    Go -- os/exec --> Py
+    Py -- Scrapes HTML --> CollegeSite
 ```
 
 ---
 
-## 🔌 API Endpoints (Go Backend)
+## 💻 Tech Stack
 
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `POST` | `/api/auth/google` | Verifies Google ID token. Returns JWT + User data (or prompts signup). |
-| `PUT` | `/api/users/me` | Creates/updates the user profile in KV. |
-| `GET` | `/api/users/me` | Fetches the authenticated user's profile. |
-| `POST` | `/api/users/me/avatar` | Uploads compressed image to Cloudflare R2. |
-| `GET` | `/api/notifications` | Triggers the Python scraper (cached for 10 mins). |
-| `GET` | `/live` | Health check endpoint for UptimeRobot. |
+<div align="center">
+
+  **Frontend**<br/>
+  <img src="https://img.shields.io/badge/Kotlin-7F52FF?style=flat-square&logo=kotlin&logoColor=white" />
+  <img src="https://img.shields.io/badge/Jetpack_Compose-4285F4?style=flat-square&logo=jetpackcompose&logoColor=white" />
+  <img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=flat-square&logo=tailwind-css&logoColor=white" />
+  <img src="https://img.shields.io/badge/HTML5-E34F26?style=flat-square&logo=html5&logoColor=white" />
+
+  **Backend & Storage**<br/>
+  <img src="https://img.shields.io/badge/Go-00ADD8?style=flat-square&logo=go&logoColor=white" />
+  <img src="https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cloudflare_R2-F38020?style=flat-square&logo=cloudflare&logoColor=white" />
+  <img src="https://img.shields.io/badge/Cloudflare_KV-F38020?style=flat-square&logo=cloudflare&logoColor=white" />
+
+  **DevOps**<br/>
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/GitHub_Actions-2088FF?style=flat-square&logo=github-actions&logoColor=white" />
+  <img src="https://img.shields.io/badge/Render-46E3B7?style=flat-square&logo=render&logoColor=white" />
+
+</div>
 
 ---
 
-## 🚀 Local Development
+## 🚀 Getting Started
 
-### 1. Backend (Go + Docker)
+### Prerequisites
+- Go 1.26+
+- Python 3.x
+- Android Studio (for the app)
+- Cloudflare Account (R2 & KV)
+- Google Cloud Project (OAuth)
+
+### 1. Backend Setup
 ```bash
 cd backend
-cp .env.example .env # Fill in your Cloudflare and Google secrets
+cp .env.example .env
+# Edit .env with your Cloudflare and Google Client ID secrets
 go mod tidy
 go run main.go
 ```
-*Note: To test the scraper locally, ensure `python3` and `requests`, `beautifulsoup4` are installed.*
 
-### 2. Android App
-1. Open the `app/` folder in **Android Studio**.
+### 2. Android Setup
+1. Open the `app/` folder in Android Studio.
 2. Create a `local.properties` file in the `app/` directory:
    ```properties
-   sdk.dir=YOUR_SDK_PATH
-   WEB_CLIENT_ID=your_actual_web_client_id.apps.googleusercontent.com
+   sdk.dir=/path/to/android/sdk
+   WEB_CLIENT_ID=your_google_web_client_id.apps.googleusercontent.com
    ```
-3. Sync Gradle and run on an emulator/device.
+3. Sync and Build.
+
+### 3. Deployment (Render)
+Render automatically deploys when changes are pushed to the `main` branch. Ensure the following Environment Variables are set in the Render Dashboard:
+<details>
+<summary>View Required Environment Variables</summary>
+
+- `GOOGLE_CLIENT_ID`
+- `JWT_SECRET`
+- `CF_ACCOUNT_ID`
+- `CF_API_TOKEN`
+- `CF_KV_NAMESPACE_ID`
+- `R2_ACCESS_KEY_ID`
+- `R2_SECRET_ACCESS_KEY`
+- `R2_BUCKET_NAME`
+</details>
 
 ---
 
-## 🚀 Release Process (CI/CD)
-This repository uses GitHub Actions to automatically build and sign the APK.
-1. Create a new release tag (e.g., `v2.0.3`).
-2. The `release.yml` workflow triggers automatically.
-3. It bumps the `versionCode` and `versionName` in `build.gradle.kts`.
-4. It builds the signed APK and attaches it to the GitHub Release.
+## 🔌 API Reference
+
+| Endpoint | Method | Auth Required | Description |
+| :--- | :--- | :---: | :--- |
+| `/api/auth/google` | `POST` | ❌ | Validates Google ID Token, returns JWT & User data. |
+| `/api/users/me` | `GET` | ✅ | Fetches the logged-in user's profile from KV. |
+| `/api/users/me` | `PUT` | ✅ | Updates/Creates profile metadata. |
+| `/api/users/me/avatar` | `POST` | ✅ | Uploads a WebP image to Cloudflare R2. |
+| `/api/notifications` | `GET` | ❌ | Fetches and caches the latest college notices via Python. |
+| `/live` | `GET`/`HEAD` | ❌ | Health check for UptimeRobot keep-alive. |
 
 ---
-<p align="center">
-  <i>Built for JDSG College, Bokakhat. Developed by <a href="https://github.com/realximanta">realximanta</a>.</i>
-</p>
+
+## 🤝 Contributing
+This project is currently maintained as a closed-source internal tool for JDSG College, but architectural reviews and bug reports are welcome via GitHub Issues.
+
+---
+<div align="center">
+  <p>Built with ❤️ for JDSG College, Bokakhat.</p>
+  <p><i>Architected by <a href="https://github.com/realximanta">realximanta</a></i></p>
+</div>
